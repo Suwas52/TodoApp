@@ -36,12 +36,44 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Qcml2YWN5LmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Home/Todo.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvSG9tZS9Ub2RvLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Shared/Components/Profile/Default.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0NvbXBvbmVudHMvUHJvZmlsZS9EZWZhdWx0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Shared/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL0Vycm9yLmNzaHRtbA==
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Shared/Partial/_Header.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL1BhcnRpYWwvX0hlYWRlci5jc2h0bWw=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Shared/Partial/_SideBar.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL1BhcnRpYWwvX1NpZGVCYXIuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Shared/_ValidationScriptsPartial.cshtml]
 build_metadata.AdditionalFiles.TargetPath = Vmlld3MvU2hhcmVkL19WYWxpZGF0aW9uU2NyaXB0c1BhcnRpYWwuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Todo/Create.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVG9kby9DcmVhdGUuY3NodG1s
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Todo/Details.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVG9kby9EZXRhaWxzLmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Todo/Edit.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVG9kby9FZGl0LmNzaHRtbA==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/Todo/TodoList.cshtml]
+build_metadata.AdditionalFiles.TargetPath = Vmlld3MvVG9kby9Ub2RvTGlzdC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/Views/_ViewImports.cshtml]

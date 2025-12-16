@@ -1,0 +1,15 @@
+
+
+@model string
+
+<div class="nav-item dropdown text-white">
+    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+        <i class="fas fa-user"></i> @(Model)
+    </a>
+    <div class="dropdown-menu dropdown-menu-end">
+       
+        <form id="logoutForm" >
+            <button id="logout" type="submit" class="dropdown-item">Logout</button>
+        </form>
+    </div>
+</div>

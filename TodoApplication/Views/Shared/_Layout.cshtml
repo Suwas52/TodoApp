@@ -1,50 +1,140 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - TodoApplication</title>
+    <meta charset="utf-8" />
+    <title>TodoApplication</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/TodoApplication.styles.css" asp-append-version="true"/>
+
+    <link rel="icon" href="/favicon.ico">
+    
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    
+    <link href="~/lib/fontawesome/css/all.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="@Url.Content("~/js/select2/select2.min.css")" />
+
+    <link rel="stylesheet" href="~/css/main.css" asp-append-version="true" />
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+
+    <style>
+        .menu-panel {
+            background: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: -150%;
+            transition: right 0.3s ease-in-out;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            z-index: 1050;
+            overflow-y: auto;
+            padding: 15px;
+        }
+
+            .menu-panel.open {
+                left: 0;
+            }
+
+        @@media (min-width: 992px) {
+            .menu-panel {
+                position: relative;
+                left: 0 !important;
+                height: auto;
+                box-shadow: none;
+            }
+        }
+            
+    </style>
 </head>
 <body>
-<header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TodoApplication</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                    </li>
-                </ul>
+    <div class="container-fluid p-3">
+
+        <div class="row">
+            <div class="col-lg-2">
+                <div id="menuPanel" class="menu-panel">
+
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-2 mb-3 d-lg-none">
+                        <h5 class="fw-bold">Todo Application</h5>
+                        <button class="btn-close" id="closeMenu"></button>
+                    </div>
+
+                    <div class="">
+                        <div class="menu-header d-none d-lg-block">
+                            <h5 class="fw-bold">Todo Application</h5>
+                        </div>
+
+                        <partial name="Partial/_SideBar"/>
+
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="col-lg-10">
+
+                <div class="d-flex justify-content-between align-items-center bg-primary p-2">
+                    
+                    <button id="menuToggle" class="btn d-block d-lg-none text-white" style="border:1px solid">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <span class="d-none d-lg-block"></span>
+
+                    @await Component.InvokeAsync("Profile")
+
+                </div>
+
+                @RenderBody()
+
+                <div id="loader" style="display:none;">
+                    <div class="spinner"></div>
+                </div>
+
+
+
             </div>
         </div>
-    </nav>
-</header>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
-
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2025 - TodoApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </div>
-</footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!--Select 2 js-->
+    <script src="@Url.Content("~/js/select2/select2helper.js")"></script>
+    <script src="@Url.Content("~/js/select2/select2.min.js")"></script>
+    <script src="@Url.Content("~/js/select2/en.js")"></script>
+
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
+
+
+    <!--Toggle-->
+    <script src="~/lib/toggle/toggle.min.js"></script>
+
+    <!--Datatable-->
+    <script src="~/js/datatable/datatable.js"></script>
+    <script src="~/js/datatable/datatables.bootstrap5.js"></script>
+
+    <script src="~/js/startup.js" asp-append-version="true"></script>
+
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const menuPanel = document.getElementById('menuPanel');
+        const closeMenu = document.getElementById('closeMenu');
+
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                menuPanel.classList.add('open');
+            });
+        }
+        if (closeMenu) {
+            closeMenu.addEventListener('click', () => {
+                menuPanel.classList.remove('open');
+            });
+        }
+        @RenderSection("Scripts", required: false)
+    </script>
+
+    
 </body>
 </html>

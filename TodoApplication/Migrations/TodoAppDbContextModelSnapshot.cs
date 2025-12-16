@@ -22,6 +22,37 @@ namespace TodoApplication.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("TodoApplication.Entities.Roles", b =>
+                {
+                    b.Property<Guid>("role_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("is_deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("role_name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("role_id");
+
+                    b.HasIndex("role_name")
+                        .IsUnique();
+
+                    b.ToTable("Roles");
+                });
+
             modelBuilder.Entity("TodoApplication.Entities.Todos", b =>
                 {
                     b.Property<int>("id")
@@ -37,6 +68,14 @@ namespace TodoApplication.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
+
+                    b.Property<string>("description")
+                        .HasColumnType("text");
+
+                    b.Property<bool>("is_deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
 
                     b.Property<int>("priority")
                         .ValueGeneratedOnAdd()
@@ -63,6 +102,122 @@ namespace TodoApplication.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Todos");
+                });
+
+            modelBuilder.Entity("TodoApplication.Entities.UserRoles", b =>
+                {
+                    b.Property<Guid>("user_id")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("role_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("user_id", "role_id");
+
+                    b.HasIndex("role_id", "user_id");
+
+                    b.ToTable("UserRoles");
+                });
+
+            modelBuilder.Entity("TodoApplication.Entities.Users", b =>
+                {
+                    b.Property<Guid>("user_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("created_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("email_confirmed")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("first_name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<bool>("is_active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<bool>("is_blocked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<bool>("is_deleted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("last_login_date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("last_name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("login_fail_count")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("password_change_date")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("password_hash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<DateTime?>("updated_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("user_id");
+
+                    b.HasIndex("email")
+                        .IsUnique();
+
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("TodoApplication.Entities.UserRoles", b =>
+                {
+                    b.HasOne("TodoApplication.Entities.Roles", "Role")
+                        .WithMany("userroles")
+                        .HasForeignKey("role_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TodoApplication.Entities.Users", "User")
+                        .WithMany("userroles")
+                        .HasForeignKey("user_id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Role");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("TodoApplication.Entities.Roles", b =>
+                {
+                    b.Navigation("userroles");
+                });
+
+            modelBuilder.Entity("TodoApplication.Entities.Users", b =>
+                {
+                    b.Navigation("userroles");
                 });
 #pragma warning restore 612, 618
         }

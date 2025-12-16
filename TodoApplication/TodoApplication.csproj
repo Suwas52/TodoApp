@@ -15,4 +15,29 @@
       <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Views\Shared\Slider\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Views\Shared\Slider\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Views\Shared\Slider\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Views\Shared\Slider\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Views\Shared\Components\User\" />
+      <Folder Include="Views\Shared\Todo\Pages\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Views\Shared\Components\Todo\TodoList.cshtml" />
+    </ItemGroup>
+
 </Project>
