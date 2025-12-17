@@ -194,3 +194,4 @@
 /Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/obj/Debug/net9.0/TodoApplication.genruntimeconfig.cache
 /Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/obj/Debug/net9.0/ref/TodoApplication.dll
 /Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/obj/Debug/net9.0/TodoApplication.sourcelink.json
+/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/BCrypt.Net-Next.dll

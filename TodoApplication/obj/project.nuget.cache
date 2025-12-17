@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "5H8wXD8RYhk=",
+  "dgSpecHash": "QeNtWDaWL5Q=",
   "success": true,
   "projectFilePath": "/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/TodoApplication.csproj",
   "expectedPackageFiles": [
+    "/Users/subashdanuwar/.nuget/packages/bcrypt.net-next/4.0.3/bcrypt.net-next.4.0.3.nupkg.sha512",
     "/Users/subashdanuwar/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/Users/subashdanuwar/.nuget/packages/microsoft.bcl.asyncinterfaces/7.0.0/microsoft.bcl.asyncinterfaces.7.0.0.nupkg.sha512",
     "/Users/subashdanuwar/.nuget/packages/microsoft.build.framework/17.8.3/microsoft.build.framework.17.8.3.nupkg.sha512",

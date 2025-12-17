@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApplication.Data;
+using TodoApplication.Extension;
+using TodoApplication.Helper;
 using TodoApplication.Repository;
 using TodoApplication.Repository.Interfaces;
 using TodoApplication.Services;
@@ -15,11 +17,18 @@ builder.Services.AddDbContext<TodoAppDbContext>(options =>
     );
 
 builder.Services.AddScoped<ITodoRepository, TodosRepository>();
+builder.Services.AddScoped<IUsersRepository, UsersRepository>();
+builder.Services.AddScoped<IRolesRepository, RolesRepository>();
+builder.Services.AddScoped<IUserRolesRepository, UserRolesRepository>();
+
 builder.Services.AddScoped<ITodoService, TodoService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IRoleSeeder, RoleSeeder>();
+builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 
 var app = builder.Build();
 
-
+await app.SeedApplicationDataAsync();
 
 // if (!app.Environment.IsDevelopment())
 // {
@@ -39,4 +48,4 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
-app.Run();
+await app.RunAsync();
