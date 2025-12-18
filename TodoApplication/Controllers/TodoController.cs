@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApplication.Dto;
 using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
 
+
+[Authorize]
 public class TodoController : Controller
 {
     private readonly ILogger<TodoController> _logger;

@@ -9,4 +9,11 @@ public class UserManagementController : Controller
     {
         return View();
     }
+    
+    
+    public IActionResult Test()
+    {
+        return Content("Account Controller Working");
+    }
+
 }

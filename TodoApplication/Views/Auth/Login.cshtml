@@ -1,0 +1,41 @@
+@model TodoApplication.Dto.LoginDto;
+@{
+    Layout = "_LoginLayout";
+    ViewBag.Title = "Log In";
+}
+
+<div class="text-center mt-4">
+    <h1 class="h2">Welcome back!</h1>
+    <p class="lead">
+        Sign in to continue
+    </p>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="m-sm-3">
+            <form id="account" >
+                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+                <div class="mb-3">
+                    @* <label asp-for="Email" class="form-label">Email</label> *@
+                    <input type="text" asp-for="Email" class="form-control form-control-lg" aria-required="true" placeholder="Enter your Username" />
+                </div>
+                <div class="mb-3">
+                    @* <label asp-for="Password" class="form-label">Password</label> *@
+                    <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Enter your password" />
+                </div>
+                @* <div> *@
+                @*     <div class="form-check align-items-center"> *@
+                @*         <input id="customControlInline" type="checkbox" class="form-check-input" value="remember-me" name="RememberMe" checked> *@
+                @*         <label class="form-check-label text-small" for="customControlInline">Remember me</label> *@
+                @*     </div> *@
+                @* </div> *@
+                <div class="d-grid gap-2 mt-3">
+                    <button id="login-submit" type="submit" class="btn btn-lg btn-primary">Sign in</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

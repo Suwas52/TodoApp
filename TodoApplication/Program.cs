@@ -26,21 +26,32 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleSeeder, RoleSeeder>();
 builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 
+
+builder.Services.AddAuthentication("TodoApplication")
+    .AddCookie("TodoApplication", options =>
+    {
+        options.LoginPath = "/Auth/Login";
+        options.LogoutPath = "/Auth/Logout";
+        options.AccessDeniedPath = "/Auth/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+    });
+
+builder.Services.AddAuthorization(); 
+
 var app = builder.Build();
 
-await app.SeedApplicationDataAsync();
-
-// if (!app.Environment.IsDevelopment())
-// {
-//     app.UseExceptionHandler("/Home/Error");
-//     app.UseHsts();
-// }
-
-
 app.UseRouting();
+app.UseStaticFiles();
 
-
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapStaticAssets();
+
+
+
+
+
 
 app.MapControllerRoute(
         name: "default",
@@ -48,4 +59,5 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 
+await app.SeedApplicationDataAsync();
 await app.RunAsync();

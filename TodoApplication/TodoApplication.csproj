@@ -34,11 +34,13 @@
 
     <ItemGroup>
       <Folder Include="Views\Shared\Components\User\" />
-      <Folder Include="Views\Shared\Todo\Pages\" />
+      <Folder Include="Views\UserManagement\" />
     </ItemGroup>
 
     <ItemGroup>
       <_ContentIncludedByDefault Remove="Views\Shared\Components\Todo\TodoList.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Auth\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="Pages\Auth\Register.cshtml" />
     </ItemGroup>
 
 </Project>
