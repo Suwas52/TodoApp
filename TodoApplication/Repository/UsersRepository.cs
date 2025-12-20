@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApplication.Data;
+using TodoApplication.Dto;
 using TodoApplication.Entities;
 using TodoApplication.Repository.Interfaces;
 
@@ -33,14 +34,23 @@ public class UsersRepository : IUsersRepository
     public async Task<Users?> GetUserByIdAsync(Guid id, CancellationToken ct)
     {
         return await _context.Users
-            .Where(t => t.user_id == id && !t.is_deleted)
-            .FirstOrDefaultAsync(ct);
+            .Include(u => u.userroles)
+            .ThenInclude(r => r.Role)
+            .FirstOrDefaultAsync(u => u.user_id == id && !u.is_deleted ,ct);
     }
 
-    public async Task<List<Users>> GetAllUserAsync(CancellationToken ct)
+    public async Task<List<UserListDto>> GetAllUserAsync(CancellationToken ct)
     {
         return await _context.Users
             .Where(t => !t.is_deleted)
+            .Select(u => new UserListDto
+            {
+                user_id = u.user_id,
+                email = u.email,
+                full_name = $"{u.first_name} {u.last_name}",
+                email_confirmed = u.email_confirmed,
+                is_active =  u.is_active,
+            })
             .ToListAsync(ct);
     }
 
@@ -48,5 +58,24 @@ public class UsersRepository : IUsersRepository
     {
         return await _context.Users.Where(u => u.email == email && !u.is_deleted)
             .FirstOrDefaultAsync(ct);
+    }
+
+    public async Task<bool> EmailExistsAsync(string email, CancellationToken ct)
+    {
+        return await _context.Users.AnyAsync(u => u.email == email, ct);
+    }
+
+    public IQueryable<UserListDto> GetUsers()
+    {
+        return _context.Users.Where(u => !u.is_deleted)
+            .Select(u => new UserListDto
+            {
+                user_id = u.user_id,
+                email = u.email,
+                full_name = $"{u.first_name} {u.last_name}",
+                email_confirmed = u.email_confirmed,
+                is_active =  u.is_active,
+                is_blocked = u.is_blocked,
+            });
     }
 }

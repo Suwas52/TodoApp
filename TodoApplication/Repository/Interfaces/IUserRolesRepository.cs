@@ -6,6 +6,7 @@ namespace TodoApplication.Repository.Interfaces;
 public interface IUserRolesRepository
 {
     Task AddUserRolesAsync(UserRoles userRoles, CancellationToken ct);
+    Task<Response> AddToRoles(Users user, List<string> roleNames, CancellationToken ct);
     Task<Response> AddToRole(Users user, string RoleName, CancellationToken ct = default);
     Task UpdateUserRoleAsync(UserRoles userRoles, CancellationToken ct); 
     Task DeleteUserRolesAsync(UserRoles userRoles, CancellationToken ct);

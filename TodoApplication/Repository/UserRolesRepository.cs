@@ -20,6 +20,39 @@ public class UserRolesRepository : IUserRolesRepository
         await _context.SaveChangesAsync(ct);
     }
 
+    public async Task<Response> AddToRoles(Users user, List<string> roleNames, CancellationToken ct)
+    {
+        var roles = await _context.Roles.Where(r => roleNames.Contains(r.role_name) && !r.is_deleted).ToListAsync(ct);
+        if (roles == null)
+            return new Response()
+            {
+                issucceed = false,
+                statusCode = StatusCodes.Status404NotFound,
+                message = "One or more Role not found",
+            };
+
+        List<UserRoles> userRole = new List<UserRoles>();
+        foreach (var role in roles)
+        {
+            var userrole = new UserRoles()
+            {
+                user_id = user.user_id,
+                role_id = role.role_id,
+            };
+            
+            userRole.Add(userrole);
+        }
+        _context.UserRoles.AddRange(userRole);
+        await _context.SaveChangesAsync(ct);
+        return new Response()
+        {
+            issucceed = true,
+            statusCode = StatusCodes.Status201Created,
+            message = "Roles add successful",
+        };
+        
+    }
+
     public async Task<Response> AddToRole(Users user, string RoleName, CancellationToken ct = default)
     {
         var role = await _context.Roles

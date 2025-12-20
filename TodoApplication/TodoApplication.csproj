@@ -34,7 +34,6 @@
 
     <ItemGroup>
       <Folder Include="Views\Shared\Components\User\" />
-      <Folder Include="Views\UserManagement\" />
     </ItemGroup>
 
     <ItemGroup>

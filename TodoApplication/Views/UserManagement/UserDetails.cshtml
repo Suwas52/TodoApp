@@ -1,0 +1,100 @@
+@model TodoApplication.Dto.UserDetailDto;
+
+@{
+    ViewData["Title"] = "User Details";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white">
+            <h5 class="mb-0">User Details</h5>
+        </div>
+
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <strong>Email:</strong>
+                    <div class="text-muted">@Model.email</div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Name:</strong>
+                    <div class="text-muted">
+                        @Model.first_name @Model.last_name
+                    </div>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <strong>Status</strong><br />
+                    <span class="badge @(Model.is_active ? "bg-success" : "bg-secondary")">
+                        @(Model.is_active ? "Active" : "Inactive")
+                    </span>
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Blocked</strong><br />
+                    <span class="badge @(Model.is_blocked ? "bg-danger" : "bg-success")">
+                        @(Model.is_blocked ? "Blocked" : "Allowed")
+                    </span>
+                </div>
+
+                <div class="col-md-4">
+                    <strong>Email Confirmed</strong><br />
+                    <span class="badge @(Model.email_confirmed ? "bg-success" : "bg-warning")">
+                        @(Model.email_confirmed ? "Yes" : "No")
+                    </span>
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="mb-3">
+                <strong>Roles</strong>
+                <div class="mt-2">
+                    @foreach (var role in Model.roles)
+                    {
+                        <span class="badge bg-primary me-1">@role.role_Name</span>
+                    }
+                </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+                <div class="col-md-6">
+                    <strong>Created At:</strong>
+                    <div class="text-muted">@Model.created_at</div>
+                </div>
+
+                <div class="col-md-6">
+                    <strong>Last Login:</strong>
+                    <div class="text-muted">
+                        @(Model.last_login_date?.ToString() ?? "Never")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-end gap-2">
+            <form asp-action="ToggleActive" asp-route-id="@Model.user_id" method="post">
+                <button class="btn btn-outline-primary btn-sm">
+                    Toggle Active
+                </button>
+            </form>
+
+            <form asp-action="ToggleBlocked" asp-route-id="@Model.user_id" method="post">
+                <button class="btn btn-outline-danger btn-sm">
+                    Toggle Block
+                </button>
+            </form>
+
+            <a asp-action="UserList" class="btn btn-outline-secondary btn-sm">
+                Back
+            </a>
+        </div>
+    </div>
+</div>

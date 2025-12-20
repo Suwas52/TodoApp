@@ -1,0 +1,68 @@
+@model List<TodoApplication.Dto.UserListDto>
+
+@{
+    ViewData["Title"] = "Todos";
+}
+
+<main class="content">
+    <div class="container-fluid p-0">
+        <div class="my-3 d-flex justify-content-between align-items-center">
+            <h4 class="d-inline align-middle">User List</h4>
+            <a asp-action="Create" class="btn btn-outline-primary">
+                <i class="fas fa-plus"></i> Add User
+            </a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover my-0">
+                <thead>
+                <tr>
+                    <th>S.N</th>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Block Status</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                @if (Model.Any())
+                {
+                    int i = 1;
+                    foreach (var item in Model)
+                    {
+                        
+                        <tr>
+                            <td>@i</td>
+                            <td>@item.full_name</td>
+                            <td>@item.email</td>
+                            <td>@item.is_active</td>
+                            <td>@item.is_blocked</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.user_id"
+                                   class="btn btn-sm btn-outline-secondary">
+                                    <i class="fas fa-pencil"></i> Edit
+                                </a>
+                                <a  href="@Url.Action("DeleteTodo", new { id = item.user_id })"  class="btn btn-sm btn-outline-danger">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                                <a asp-action="UserDetails" asp-route-id="@item.user_id"
+                                   class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-eye"></i> Details
+                                </a>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center">No Users Found</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

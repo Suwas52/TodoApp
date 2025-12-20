@@ -25,27 +25,29 @@ builder.Services.AddScoped<ITodoService, TodoService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleSeeder, RoleSeeder>();
 builder.Services.AddScoped<IUserSeeder, UserSeeder>();
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
-builder.Services.AddAuthentication("TodoApplication")
-    .AddCookie("TodoApplication", options =>
-    {
-        options.LoginPath = "/Auth/Login";
-        options.LogoutPath = "/Auth/Logout";
-        options.AccessDeniedPath = "/Auth/AccessDenied";
-        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
-        options.SlidingExpiration = true;
-    });
+// builder.Services.AddAuthentication("TodoApplication")
+//     .AddCookie("TodoApplication", options =>
+//     {
+//         options.LoginPath = "/Auth/Login";
+//         options.LogoutPath = "/Auth/Logout";
+//         options.AccessDeniedPath = "/Auth/AccessDenied";
+//         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+//         options.SlidingExpiration = true;
+//     });
 
-builder.Services.AddAuthorization(); 
+// builder.Services.AddAuthorization(); 
 
 var app = builder.Build();
 
 app.UseRouting();
 app.UseStaticFiles();
 
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 app.MapStaticAssets();
 
 

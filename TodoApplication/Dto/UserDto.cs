@@ -6,6 +6,40 @@ public class UserCreateDto
     public string first_name { get; set; }
     public string last_name { get; set; }
     public string password { get; set; }
+    
+}
+
+public class UserDetailDto
+{
+    public Guid user_id { get; set; } 
+    public string email { get; set; }
+    public string first_name { get; set; }
+    public string last_name { get; set; }
+    public bool email_confirmed { get; set; }
+    public bool is_active { get; set; }
+    public bool is_deleted { get; set; }
+    public bool is_blocked { get; set; }
+    public DateTime created_at { get; set; }
+    public DateTime? updated_at { get; set; }
+    public int login_fail_count { get; set; }
+    public DateTime? password_change_date { get; set; }
+    public DateTime? last_login_date { get; set; }
+    public List<RoleDto> roles { get; set; } 
+    
+}
+
+public class RoleDto
+{
+    public Guid role_id { get; set; }
+    public string role_Name { get; set; }
+}
+
+public class AdminAddUserDto
+{
+    public string email { get; set; }
+    public string first_name { get; set; }
+    public string last_name { get; set; }
+    public List<string> roles { get; set; }
 }
 
 public class UserUpdateDto : UserCreateDto

@@ -6,7 +6,7 @@ using TodoApplication.Services.Interfaces;
 namespace TodoApplication.Controllers;
 
 
-[Authorize]
+// [Authorize]
 public class TodoController : Controller
 {
     private readonly ILogger<TodoController> _logger;

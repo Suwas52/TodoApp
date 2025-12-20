@@ -11,6 +11,8 @@ public interface IUserService
     Task<Response> UserBlockAsync(Guid id, CancellationToken ct);
     Task<Response> UserUnblockAsync(Guid id, CancellationToken ct);
     Task<Response> UserActivateAsync(Guid id, CancellationToken ct);
-    Task<List<Users>>  GetAllUsersAsync(CancellationToken ct);
-    Task<Users?> GetUserByIdAsync(Guid id, CancellationToken ct);
+    Task<List<UserListDto>>  GetAllUsersAsync(CancellationToken ct);
+    Task<UserDetailDto?> GetUserByIdAsync(Guid id, CancellationToken ct);
+    Task<Response> AdminAddUserAsync(AdminAddUserDto dto, CancellationToken ct);
+
 }
