@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApplication.Dto;
 using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
 
+[Authorize(Roles = "SuperAdmin")]
 public class UserManagementController : Controller
 {
     // GET
@@ -13,11 +15,6 @@ public class UserManagementController : Controller
     {
         _userService = userService;
     }
-    public IActionResult Index()
-    {
-        return View();
-    }
-    
     
     public async Task<IActionResult> UserList(CancellationToken ct)
     {

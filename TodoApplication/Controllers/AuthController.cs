@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using TodoApplication.Dto;
 using TodoApplication.Services.Interfaces;
@@ -19,6 +18,8 @@ public class AuthController : Controller
         return View();
     }
 
+    [HttpPost]
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> LoginData(LoginDto dto, CancellationToken ct)
     {
         var principle = await _authService.LoginAsync(dto, ct);
@@ -27,7 +28,7 @@ public class AuthController : Controller
             return Unauthorized("Invalid Credentials");
 
         await HttpContext.SignInAsync(
-            CookieAuthenticationDefaults.AuthenticationScheme,
+            "TodoApplication",
             principle);
         
         return RedirectToAction("Index", "Home");
