@@ -4,12 +4,22 @@
 
 <div class="nav-item dropdown text-white">
     <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
-        <i class="fas fa-user"></i> @(Model)
+        <i class="fa-solid fa-user me-1"></i> @Model
     </a>
+
     <div class="dropdown-menu dropdown-menu-end">
-       
-        <form id="logoutForm" asp-action="Logout" asp-controller="Auth" >
-            <button id="logout" type="submit" class="dropdown-item">Logout</button>
+        <a asp-action="Profile" asp-controller="Auth"  class="dropdown-item">
+            <i class="fa-solid fa-id-badge me-2"></i> Profile
+        </a>
+        <a asp-action="PasswordChange" asp-controller="Auth"  class="dropdown-item">
+            <i class="fa-solid fa-id-badge me-2"></i> Change Password
+        </a>
+
+        <form asp-action="Logout" asp-controller="Auth" method="post">
+            <button type="submit" class="dropdown-item">
+                <i class="fa-solid fa-right-from-bracket me-2"></i> Logout
+            </button>
         </form>
     </div>
 </div>
+

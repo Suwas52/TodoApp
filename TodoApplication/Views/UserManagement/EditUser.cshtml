@@ -20,7 +20,7 @@
             <div class="card shadow">
                 <div class="card-body">
                     <div class="m-sm-3">
-                        <form asp-action="UpdateUser" method="post">
+                        <form method="post">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                             <div class="form-floating py-2">
                                 <input asp-for="first_name" class="form-control" />
@@ -49,7 +49,9 @@
                                            type="checkbox"
                                            name="roles"
                                            value="SuperAdmin"
-                                           id="SuperAdmin" />
+                                           id="SuperAdmin"
+                                            @(Model.roles != null && Model.roles.Contains("SuperAdmin") ? "checked" : "")
+                                           />
 
                                     <label class="form-check-label" for="SuperAdmin">
                                         SuperAdmin
@@ -60,7 +62,9 @@
                                            type="checkbox"
                                            name="roles"
                                            value="Manager"
-                                           id="Manager" />
+                                           id="Manager" 
+                                           @(Model.roles != null && Model.roles.Contains("Manager") ? "checked" : "")
+                                           />
 
                                     <label class="form-check-label" for="Manager">
                                         Manager
@@ -71,7 +75,9 @@
                                            type="checkbox"
                                            name="roles"
                                            value="User"
-                                           id="User" />
+                                           id="User" 
+                                           @(Model.roles != null && Model.roles.Contains("User") ? "checked" : "")
+                                           />
 
                                     <label class="form-check-label" for="User">
                                         User

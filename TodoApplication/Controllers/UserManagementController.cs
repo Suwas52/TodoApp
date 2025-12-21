@@ -5,8 +5,8 @@ using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
 
-//[Authorize(Roles = "SuperAdmin")]
-[Authorize]
+[Authorize(Roles = "SuperAdmin")]
+//[Authorize]
 public class UserManagementController : Controller
 {
     // GET
@@ -71,7 +71,7 @@ public class UserManagementController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> UpdateUser(Guid id, AdminUpdateUserDto dto, CancellationToken ct)
+    public async Task<IActionResult> EditUser(Guid id, AdminUpdateUserDto dto, CancellationToken ct)
     {
         if (!ModelState.IsValid)
             return View(dto);
@@ -79,9 +79,8 @@ public class UserManagementController : Controller
         if (!result.issucceed)
         {
             ModelState.AddModelError("", result.message);
-            return View(result);
+            return View(dto);
         }
-
         return RedirectToAction(nameof(UserList));
     }
 

@@ -134,7 +134,47 @@ public class UserService : IUserService
         if(roleToRemove.Any())
             await _userRolesRepository.RemoveUserFromRolesAsync(user.user_id, roleToRemove, ct);
         
+    }
+
+    public async Task<Response> ChangePassword(Guid user_id, ChangePasswordDto dto, CancellationToken ct)
+    {
+        var user = await _usersRepository.GetUserByIdAsync(user_id, ct);
+        if (user == null)
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 404,
+                message = "User not found.",
+            };
         
+        var correctPassword = PasswordHasher.VerifyHashedPassword(user.password_hash, dto.old_password);
+
+        if (!correctPassword)
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 400,
+                message = "Old password does not match.",
+            };
+
+        if (dto.new_password != dto.confirm_password)
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 400,
+                message = "Confirm password does not match.",
+            };
+        
+        var newHashPassword = PasswordHasher.HashPassword(dto.new_password);
+        user.password_hash = newHashPassword;
+        user.password_change_date = DateTime.UtcNow;
+        await _uow.SaveChangesAsync(ct);
+        return new Response
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = "User Updated Successfully.",
+        };
     }
 
     // public async Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct)
@@ -231,7 +271,6 @@ public class UserService : IUserService
                     message = "One or more Roles not found",
                 };
             }
-
             var roleResult = await _userRolesRepository.AddToRoles(user, dto.roles, ct);
             if (!roleResult.issucceed)
             {

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoApplication.Data;
 using TodoApplication.Extension;
 using TodoApplication.Helper;
+using TodoApplication.Identity;
 using TodoApplication.Repository;
 using TodoApplication.Repository.Interfaces;
 using TodoApplication.Services;
@@ -27,6 +28,9 @@ builder.Services.AddScoped<IRoleSeeder, RoleSeeder>();
 builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ISystemInfoFromCookie, SystemInfoFromCookie>();
 
 
 builder.Services.AddAuthentication("TodoApplication")

@@ -24,6 +24,7 @@ public class RoleSeeder : IRoleSeeder
         var roles = new[]
         {
             Role.SuperAdmin,
+            Role.Manager,
             Role.User,
         };
 

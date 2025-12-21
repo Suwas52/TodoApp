@@ -36,11 +36,7 @@ public class UserDetailDto
     
 }
 
-public class RoleDto
-{
-    public Guid role_id { get; set; }
-    public string role_Name { get; set; }
-}
+
 
 public class AdminAddUserDto
 {
