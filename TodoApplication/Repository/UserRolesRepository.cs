@@ -20,6 +20,13 @@ public class UserRolesRepository : IUserRolesRepository
         await _context.SaveChangesAsync(ct);
     }
 
+    public async Task RemoveUserFromRolesAsync(Guid user_id, List<string> roles, CancellationToken ct)
+    {
+        var userroles = await _context.UserRoles.Where(r => r.user_id == user_id && roles.Contains(r.Role.role_name)).ToListAsync(ct);
+        _context.UserRoles.RemoveRange(userroles);
+        await _context.SaveChangesAsync(ct);
+    }
+
     public async Task<Response> AddToRoles(Users user, List<string> roleNames, CancellationToken ct)
     {
         var roles = await _context.Roles.Where(r => roleNames.Contains(r.role_name) && !r.is_deleted).ToListAsync(ct);
@@ -83,6 +90,8 @@ public class UserRolesRepository : IUserRolesRepository
         };
     }
 
+    //public async 
+    
     public async Task UpdateUserRoleAsync(UserRoles userRoles, CancellationToken ct)
     {
         _context.UserRoles.Update(userRoles);

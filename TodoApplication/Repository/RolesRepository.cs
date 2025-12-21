@@ -61,4 +61,12 @@ public class RolesRepository : IRolesRepository
         var count = await _context.Roles.CountAsync(r => roleNames.Contains(r.role_name) && !r.is_deleted, ct);
         return count == roleNames.Count;
     }
+
+    public async Task<List<string>> GetAllUserRolesAsync(Guid user_id, CancellationToken ct)
+    {
+        return await _context.UserRoles
+            .Where(r => r.user_id == user_id)
+            .Select(r => r.Role.role_name)
+            .ToListAsync(ct);
+    }
 }

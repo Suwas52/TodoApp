@@ -11,6 +11,5 @@ public class Roles
     public DateTime created_at  { get; set; }
     public DateTime? updated_at  { get; set; }
     public bool is_deleted  { get; set; }
-
     public ICollection<UserRoles> userroles { get; set; }
 }

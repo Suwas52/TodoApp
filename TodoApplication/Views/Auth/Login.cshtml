@@ -5,10 +5,7 @@
 }
 
 <div class="text-center mt-4">
-    <h1 class="h2">Welcome back!</h1>
-    <p class="lead">
-        Sign in to continue
-    </p>
+    <h1 class="h2">Sign In</h1>
 </div>
 
 <div class="card">
@@ -19,12 +16,22 @@
 
                 <div class="mb-3">
                     @* <label asp-for="Email" class="form-label">Email</label> *@
-                    <input type="text" asp-for="Email" class="form-control form-control-lg" aria-required="true" placeholder="Enter your Username" />
+                    <input type="text" asp-for="Email" class="form-control form-control-lg" aria-required="true" placeholder="Enter your Email" />
                 </div>
-                <div class="mb-3">
-                    @* <label asp-for="Password" class="form-label">Password</label> *@
-                    <input asp-for="Password" type="password" class="form-control form-control-lg" placeholder="Enter your password" />
+                <div class="mb-3 position-relative">
+                    <input asp-for="Password"
+                           type="password"
+                           id="passwordInput"
+                           class="form-control form-control-lg pe-5"
+                           placeholder="Enter your password" />
+
+                    <button type="button"
+                            class="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2"
+                            onclick="togglePassword()">
+                        <i id="eyeIcon" class="bi bi-eye"></i>
+                    </button>
                 </div>
+
                 @* <div> *@
                 @*     <div class="form-check align-items-center"> *@
                 @*         <input id="customControlInline" type="checkbox" class="form-check-input" value="remember-me" name="RememberMe" checked> *@
@@ -33,9 +40,31 @@
                 @* </div> *@
                 <div class="d-grid gap-2 mt-3">
                     <button id="login-submit" type="submit" class="btn btn-lg btn-primary">Sign in</button>
+                    <a asp-controller="Auth"
+                       asp-action="Register"
+                       class="btn btn-lg btn-outline-secondary">
+                        Create new account
+                    </a>
                 </div>
 
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    function togglePassword() {
+        const input = document.getElementById("passwordInput");
+        const icon = document.getElementById("eyeIcon");
+
+        if (input.type === "password") {
+            input.type = "text";
+            icon.classList.remove("bi-eye");
+            icon.classList.add("bi-eye-slash");
+        } else {
+            input.type = "password";
+            icon.classList.remove("bi-eye-slash");
+            icon.classList.add("bi-eye");
+        }
+    }
+</script>

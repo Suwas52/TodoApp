@@ -5,7 +5,8 @@ using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
 
-[Authorize(Roles = "SuperAdmin")]
+//[Authorize(Roles = "SuperAdmin")]
+[Authorize]
 public class UserManagementController : Controller
 {
     // GET
@@ -44,6 +45,41 @@ public class UserManagementController : Controller
         {
             ModelState.AddModelError("", result.message);
             return View(dto);
+        }
+
+        return RedirectToAction(nameof(UserList));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditUser(Guid id, CancellationToken ct)
+    {
+        var user = await _userService.GetUserByIdAsync(id, ct);
+        if (user == null)
+            return NotFound();
+        
+        var dto = new AdminUpdateUserDto
+        {
+            email = user.email,
+            first_name  = user.first_name,
+            last_name   = user.last_name,
+            roles = user.roles.Select(r => r.role_Name).ToList()
+        };
+        
+        return View(dto);
+    }
+
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UpdateUser(Guid id, AdminUpdateUserDto dto, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+            return View(dto);
+        var result = await _userService.AdminUpdateUserAsync(id, dto, ct);
+        if (!result.issucceed)
+        {
+            ModelState.AddModelError("", result.message);
+            return View(result);
         }
 
         return RedirectToAction(nameof(UserList));

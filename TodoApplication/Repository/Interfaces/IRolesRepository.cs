@@ -12,4 +12,5 @@ public interface IRolesRepository
     Task<List<Roles>> GetAllRoleAsync(CancellationToken ct);
     Task<bool> RoleExistsAsync(string roleName);
     Task<bool> RolesExistsAsync(List<string> roleNames, CancellationToken ct);
+    Task<List<string>> GetAllUserRolesAsync(Guid user_id, CancellationToken ct);
 }

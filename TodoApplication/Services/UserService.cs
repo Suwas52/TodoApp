@@ -26,11 +26,11 @@ public class UserService : IUserService
         _userRolesRepository = userRolesRepository;
         _uow = uow;
     }
-    public async Task<Response> CreateUserAsync(UserCreateDto dto, CancellationToken ct)
+    public async Task<Response> RegisterUser(UserCreateDto dto, CancellationToken ct)
     {
         var emailUserExist = await _usersRepository.EmailExistsAsync(dto.email, ct);
         
-        if (!emailUserExist)
+        if (emailUserExist)
             return new Response
             {
                 issucceed = false,
@@ -63,15 +63,97 @@ public class UserService : IUserService
         {
             issucceed = true,
             statusCode = 200,
-            message = "User created successfully.",
+            message = "User Register successfully.",
         };
 
     }
 
-    public Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct)
+    public async Task<Response> AdminUpdateUserAsync(Guid id, AdminUpdateUserDto dto, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        await _uow.BeginTransactionAsync(ct);
+        try
+        {
+            var user = await _usersRepository.GetUserByIdAsync(id, ct);
+            if (user == null)
+                return new Response
+                {
+                    issucceed = false,
+                    statusCode = 404,
+                    message = "User not found.",
+                };
+
+            var rolesExist = await _rolesRepository.RolesExistsAsync(dto.roles, ct);
+            if (!rolesExist)
+                return new Response
+                {
+                    issucceed = false,
+                    statusCode = 404,
+                    message = "One or more roles does not found.",
+                };
+        
+            user.first_name = dto.first_name;
+            user.last_name = dto.last_name;
+            user.email = dto.email;
+            
+            await RolesAddOrRemove(user,dto.roles, ct);
+            await _uow.CommitTransactionAsync(ct);
+
+            return new Response()
+            {
+                issucceed = true,
+                statusCode = 200,
+                message = "User Updated Successfully.",
+            };
+            
+        }
+        catch (Exception ex)
+        {
+            await _uow.RollbackTransactionAsync(ct);
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 500,
+                message = ex.Message,
+            };
+        }
+        
+        
     }
+
+    private async Task RolesAddOrRemove(Users user, List<string> roles, CancellationToken ct)
+    {
+        
+        var userroles = await _rolesRepository.GetAllUserRolesAsync(user.user_id, ct);
+        
+        var roleToAdd = roles.Except(userroles).ToList();
+        var roleToRemove = userroles.Except(roles).ToList();
+        
+        if(roleToAdd.Any())
+            await _userRolesRepository.AddToRoles(user, roleToAdd, ct);
+        
+        if(roleToRemove.Any())
+            await _userRolesRepository.RemoveUserFromRolesAsync(user.user_id, roleToRemove, ct);
+        
+        
+    }
+
+    // public async Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct)
+    // {
+    //     var user = await _usersRepository.GetUserByIdAsync(id, ct);
+    //     if (user == null)
+    //         return new Response
+    //         {
+    //             issucceed = false,
+    //             statusCode = 404,
+    //             message = "User not found.",
+    //         };
+    //     
+    //     user.first_name = dto.first_name;
+    //     user.last_name = dto.last_name;
+    //     user.email = dto.email;
+    //     user.password_hash = dto.password;
+    //     
+    // }
 
     public Task<Response> UserDeleteAsync(Guid id, CancellationToken ct)
     {

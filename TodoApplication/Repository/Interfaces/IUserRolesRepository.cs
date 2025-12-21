@@ -10,6 +10,7 @@ public interface IUserRolesRepository
     Task<Response> AddToRole(Users user, string RoleName, CancellationToken ct = default);
     Task UpdateUserRoleAsync(UserRoles userRoles, CancellationToken ct); 
     Task DeleteUserRolesAsync(UserRoles userRoles, CancellationToken ct);
+    Task RemoveUserFromRolesAsync(Guid user_id, List<string> roles, CancellationToken ct);
     // Task<UserRoles?> GetUserRoleByIdAsync(int id, CancellationToken ct);
     // Task<List<UserRoles>> GetAllUserRoleAsync(CancellationToken ct);
 }

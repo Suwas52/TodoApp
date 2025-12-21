@@ -1,4 +1,4 @@
-@model TodoApplication.Dto.AdminAddUserDto;
+@model TodoApplication.Dto.AdminUpdateUserDto;
 
 @{
     ViewData["Title"] = "Create User";
@@ -14,13 +14,13 @@
         <div class="d-table-cell align-middle">
             
             <div class="text-center mt-3">
-                <h1 class="h2">Create New User</h1>
+                <h1 class="h2">Edit User</h1>
             </div>
 
             <div class="card shadow">
                 <div class="card-body">
                     <div class="m-sm-3">
-                        <form asp-action="Create" method="post">
+                        <form asp-action="UpdateUser" method="post">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
                             <div class="form-floating py-2">
                                 <input asp-for="first_name" class="form-control" />

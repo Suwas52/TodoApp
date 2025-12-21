@@ -54,10 +54,13 @@ public class UsersRepository : IUsersRepository
             .ToListAsync(ct);
     }
 
-    public async Task<Users?> GetUserByEmailAsync(string email, CancellationToken ct = default)
+    public async Task<Users?> GetUserByEmailAsync(string email, CancellationToken ct )
     {
-        return await _context.Users.Where(u => u.email == email && !u.is_deleted)
-            .FirstOrDefaultAsync(ct);
+        
+        return await _context.Users
+            .Include(u => u.userroles)
+            .ThenInclude(r => r.Role)
+            .FirstOrDefaultAsync(u => u.email == email && !u.is_deleted ,ct);
     }
 
     public async Task<bool> EmailExistsAsync(string email, CancellationToken ct)

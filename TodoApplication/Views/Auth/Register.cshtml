@@ -1,70 +1,66 @@
 
 @model TodoApplication.Dto.UserCreateDto;
 @{
-    Layout = "/Views/Shared/_Layout.cshtml";
+    Layout = "/Views/Shared/_RegisterLayout.cshtml";
     ViewData["Title"] = "Register";
 }
 
 <main class="content">
-    <div class="d-flex justify-content-end">
-        <a asp-action="Index" asp-area="Admin" asp-controller="User" class="btn btn-outline-danger">
-            ← Back to List
-        </a>
-    </div>
-    <div class="col-sm-12 col-md-10 col-lg-8 col-xl-8 mx-auto d-table h-100">
-        <div class="d-table-cell align-middle">
-            
-            <div class="text-center mt-3">
-                <h1 class="h2">Register - ADMIN PORTAL</h1>
-                <p class="lead">
-                    Create new employee or individual account
-                </p>
+
+    <div class="card auth-card p-4">
+        <h3 class="text-center fw-bold mb-4">Sign up</h3>
+
+        <form method="post" asp-action="Register">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+            <!-- Name -->
+            <div class="form-floating mb-3">
+                <input asp-for="first_name" class="form-control" id="first_name" placeholder="First Name">
+
+                <label for="first_name">First Name</label>
+                <span asp-validation-for="first_name" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="last_name"  class="form-control" id="last_name" placeholder="Last Name">
+                <label for="last_name">Last Name</label>
+                <span asp-validation-for="last_name" class="text-danger"></span>
             </div>
 
-            <div class="card shadow">
-                <div class="card-body">
-                    <div class="m-sm-3">
-                        <form id="registerForm" asp-action="Register" method="post">
-                            <div asp-validation-summary="ModelOnly" role="alert"></div>
-                            <div class="form-floating py-2">
-                                <input asp-for="first_name" class="form-control" />
-                                <label asp-for="first_name" class="ms-2">First Name</label>
-                                <span asp-validation-for="first_name"></span>
-                            </div>
-                            
-                            <div class="form-floating py-2">
-                                <input asp-for="last_name" class="form-control" />
-                                <label asp-for="last_name" class="ms-2">Last Name</label>
-                                <span asp-validation-for="last_name"></span>
-                            </div>
-
-                            <div class="form-floating py-2">
-                                <input asp-for="email" class="form-control" />
-                                <label asp-for="email" class="ms-2">Email</label>
-                                <span asp-validation-for="email"></span>
-                            </div>
-
-                            <div class="form-floating py-2">
-                                <input asp-for="password" class="form-control" type="password" aria-required="true" />
-                                <label asp-for="password" class="ms-2">Password</label>
-                                <span asp-validation-for="password"></span>
-                            </div>
-                            @* <div class="form-floating py-2"> *@
-                            @*     <input asp-for="confirm_password" class="form-control" type="password" aria-required="true" /> *@
-                            @*     <label asp-for="confirm_password" class="ms-2">Confirm Password</label> *@
-                            @*     <span asp-validation-for="confirm_password"></span> *@
-                            @* </div> *@
-                            <div class="d-grid gap-2 mt-3">
-                                <button id="register-submit" type="submit" class="btn btn-lg btn-primary">Create</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+            <!-- Email -->
+            <div class="form-floating mb-3 position-relative">
+                <input asp-for="email" 
+                       class="form-control"
+                       id="email"
+                       placeholder="Email">
+                <label for="email">Email</label>
+                <span asp-validation-for="email" class="text-danger"></span>
             </div>
-        </div>
+
+            <!-- Password -->
+            <div class="form-floating mb-4">
+                <input asp-for="password" 
+                       class="form-control"
+                       id="password"
+                       placeholder="Password">
+                <label for="password">Password</label>
+                <span asp-validation-for="last_name" class="text-danger"></span>
+            </div>
+
+            <!-- Sign up button -->
+            <button type="submit" class="btn btn-primary w-100 mb-3">
+                Sign Up
+            </button>
+
+            <!-- Login -->
+            <div class="text-center mb-3">
+                <span class="text-muted">Already have an account?</span>
+                <a asp-action="Login" class="fw-semibold">Log In</a>
+            </div>
+
+        </form>
     </div>
 </main>
+<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+<script src="~/lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js"></script>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+
+

@@ -22,7 +22,7 @@ public class AuthService : IAuthService
    
     public async Task<ClaimsPrincipal?> LoginAsync(LoginDto dto, CancellationToken ct)
     {
-        var user = await _usersRepo.GetUserByEmailAsync(dto.Email);
+        var user = await _usersRepo.GetUserByEmailAsync(dto.Email, ct);
         if (user == null) return null;
 
         bool passwordMatch =
