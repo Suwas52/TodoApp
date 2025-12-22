@@ -170,6 +170,21 @@
                 Last updated: @(Model.updated_at != default ? Model.updated_at.ToString("MMM dd, yyyy HH:mm") : "Never")
             </span>
             <div class="d-flex gap-2">
+                @if (Model.status != todo_status.Completed)
+                {
+                    @* Replace 'ToggleComplete' with your actual Action name in the Todo Controller *@
+                    <form asp-action="TodoComplete" asp-route-id="@Model.id" method="post">
+                        <button type="submit" class="btn btn-success px-4 rounded-pill shadow-sm">
+                            <i class="bi bi-check2-circle me-2"></i>Mark as Complete
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <button class="btn btn-outline-success px-4 rounded-pill border-2 fw-bold" disabled>
+                        <i class="bi bi-patch-check-fill me-2"></i>Task Completed
+                    </button>
+                }
                 <a asp-action="Edit" asp-route-id="@Model.id" class="btn btn-primary px-4 rounded-pill">
                     <i class="bi bi-pencil-square me-2"></i>Edit Task
                 </a>

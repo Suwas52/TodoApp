@@ -8,6 +8,9 @@
 
     <ItemGroup>
       <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
+      <PackageReference Include="Hangfire" Version="1.8.22" />
+      <PackageReference Include="Hangfire.AspNetCore" Version="1.8.22" />
+      <PackageReference Include="Hangfire.PostgreSql" Version="1.20.13" />
       <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.8" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.8">
         <PrivateAssets>all</PrivateAssets>
@@ -33,6 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Email\" />
       <Folder Include="Views\Shared\Components\User\" />
     </ItemGroup>
 

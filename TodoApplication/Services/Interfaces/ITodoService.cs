@@ -11,4 +11,5 @@ public interface ITodoService
     Task<Response> DeleteTodo(int id, CancellationToken ct);
     Task<Response> UpdateTodo(int id, CreateTodoDto dto, CancellationToken ct);
     Task<List<TodoListDto>> RecentTodos(CancellationToken ct);
+    Task<Response> CompleteTodo(int id, CancellationToken ct);
 }

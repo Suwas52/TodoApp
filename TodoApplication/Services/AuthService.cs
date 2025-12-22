@@ -107,6 +107,19 @@ public class AuthService : IAuthService
         }
         return await _dashboard.UserDashboardCard(_cookieInfo.user_id,ct);
     }
-    
+
+    // public async Task<Response> ForgetPassword(string email, CancellationToken ct)
+    // {
+    //     var user = await _usersRepo.GetUserByEmailAsync(email, ct);
+    //     if (user == null)
+    //         return new Response
+    //         {
+    //             issucceed = false,
+    //             statusCode = 400,
+    //             message = "User not found.",
+    //         };
+    //     
+    //     
+    // }
 
 }

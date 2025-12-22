@@ -1,3 +1,6 @@
+using Hangfire;
+using Hangfire.Dashboard;
+using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
 using TodoApplication.Data;
 using TodoApplication.Extension;
@@ -32,6 +35,18 @@ builder.Services.AddScoped<IDashbordCardRepo, DashbordCardRepo>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISystemInfoFromCookie, SystemInfoFromCookie>();
 
+builder.Services.AddHangfire(config =>
+{
+    config
+        .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+        .UseSimpleAssemblyNameTypeSerializer()
+        .UseRecommendedSerializerSettings()
+        .UsePostgreSqlStorage(
+            builder.Configuration.GetConnectionString("TodoConString")
+        );
+});
+
+
 
 builder.Services.AddAuthentication("TodoApplication")
     .AddCookie("TodoApplication", options =>
@@ -55,15 +70,30 @@ app.UseAuthorization();
 app.MapStaticAssets();
 
 
-
-
-
-
 app.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[]
+    {
+        new HangfireAuthorizationFilter()
+    }
+});
+
+
 
 await app.SeedApplicationDataAsync();
 await app.RunAsync();
+public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
+{
+    public bool Authorize(DashboardContext context)
+    {
+        var httpContext = context.GetHttpContext();
+
+        return httpContext.User.Identity?.IsAuthenticated == true
+               && httpContext.User.IsInRole("SuperAdmin");
+    }
+}

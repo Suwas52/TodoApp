@@ -177,9 +177,27 @@ public class UserService : IUserService
         };
     }
 
-    public Task<Response> UserDeleteAsync(Guid id, CancellationToken ct)
+    public async Task<Response> UserDeleteAsync(Guid id, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = await _usersRepository.GetUserByIdAsync(id, ct);
+        if (user == null)
+            return new Response() 
+            { issucceed = false, 
+                statusCode = 404, 
+                message = "User not found." 
+            };
+
+        user.is_deleted = true; 
+        user.updated_at = DateTime.UtcNow;
+
+        await _uow.SaveChangesAsync(ct);
+    
+        return new Response()
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = "User deleted successfully",
+        };
     }
 
     public async Task<Response> BlockUnBlockUser(Guid id, CancellationToken ct)

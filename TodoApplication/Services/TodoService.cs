@@ -11,13 +11,16 @@ public class TodoService : ITodoService
 {
     private readonly ITodoRepository _todoRepository;
     private readonly ISystemInfoFromCookie _cookieInfo;
+    private readonly IUnitOfWork _uow;
 
     public TodoService(
         ITodoRepository todoRepository,
-        ISystemInfoFromCookie cookieInfo)
+        ISystemInfoFromCookie cookieInfo,
+        IUnitOfWork uow)
     {
         _todoRepository = todoRepository;
         _cookieInfo = cookieInfo;
+        _uow = uow;
     }
     public async Task<Response> AddTodo(CreateTodoDto todoDto, CancellationToken ct)
     {
@@ -58,6 +61,40 @@ public class TodoService : ITodoService
     public async Task<Todos?> GetTodoById(int id, CancellationToken ct)
     {
         return await _todoRepository.GetTodosByIdAsync(id, ct);
+    }
+    
+    
+    public async Task<Response> CompleteTodo(int id, CancellationToken ct)
+    {
+        var todo = await _todoRepository.GetTodosByIdAsync(id, ct);
+        if (todo == null)
+            return new Response() 
+            { issucceed = false, 
+                statusCode = 404, 
+                message = "Todo not found." 
+            };
+        
+        if (todo.status == todo_status.Expired)
+        {
+            return new Response() 
+            { issucceed = false, 
+                statusCode = 409, 
+                message = "Todo is already expired found. cannot change" 
+            };
+        }
+
+        todo.status = todo_status.Completed; 
+        todo.updated_at = DateTime.UtcNow;
+
+        await _uow.SaveChangesAsync(ct);
+    
+        return new Response()
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = "Todo Completed successfuly"
+        };
+    
     }
 
     public async Task<Response> UpdateTodo(int id, CreateTodoDto dto, CancellationToken ct)

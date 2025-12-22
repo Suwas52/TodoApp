@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApplication.Dto;
 using TodoApplication.Dto.User;
@@ -6,6 +7,7 @@ using TodoApplication.Identity;
 using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
+
 
 public class AuthController : Controller
 {
@@ -68,6 +70,7 @@ public class AuthController : Controller
     }
     
 
+    [Authorize]
     public async Task<IActionResult> Logout()
     {
         await HttpContext.SignOutAsync("TodoApplication");
@@ -75,7 +78,7 @@ public class AuthController : Controller
     }
     
 
-    
+    [Authorize]
     public IActionResult PasswordChange()
     {
         var dto = new ChangePasswordDto
@@ -85,6 +88,7 @@ public class AuthController : Controller
         return View(dto);
     }
     
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PasswordChange(ChangePasswordDto dto, CancellationToken ct)
@@ -101,12 +105,14 @@ public class AuthController : Controller
         return RedirectToAction(nameof(PasswordChange));
     }
     
+    [Authorize]
     public async Task<IActionResult> Profile(CancellationToken ct)
     {
         var detail = await _authService.UserProfileDetail(ct);
         return View(detail);
     }
     
+    [Authorize]
     public async Task<IActionResult> EditProfile(CancellationToken ct)
     {
         var detail = await _authService.UserProfileDetail(ct);
@@ -122,6 +128,7 @@ public class AuthController : Controller
         return View(dto);
     }
 
+    [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditProfile(UserUpdateDto dto, CancellationToken ct)
@@ -139,6 +146,8 @@ public class AuthController : Controller
         
         return RedirectToAction(nameof(Profile));
     }
+    
+    
     
     
 

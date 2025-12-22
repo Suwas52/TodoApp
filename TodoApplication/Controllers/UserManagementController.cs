@@ -100,6 +100,14 @@ public class UserManagementController : Controller
     
     
     [HttpPost] 
+    public async Task<IActionResult> UserDelete(Guid id, CancellationToken ct)
+    {
+        var result = await _userService.UserDeleteAsync(id, ct);
+        
+        return RedirectToAction(nameof(UserList), new { id = id });
+    }
+    
+    [HttpPost] 
     public async Task<IActionResult> ActiveInactiveUser(Guid id, CancellationToken ct)
     {
         var result = await _userService.UserActivateInactive(id, ct);

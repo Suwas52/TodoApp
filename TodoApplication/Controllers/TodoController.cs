@@ -97,4 +97,14 @@ public class TodoController : Controller
         return RedirectToAction(nameof(TodoList));
     }
     
+        
+    
+    [HttpPost] 
+    public async Task<IActionResult> TodoComplete(int id, CancellationToken ct)
+    {
+        var result = await _todoService.CompleteTodo(id, ct);
+        
+        return RedirectToAction(nameof(Details), new { id = id });
+    }
+    
 }

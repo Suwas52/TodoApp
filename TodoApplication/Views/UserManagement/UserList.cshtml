@@ -1,75 +1,186 @@
-@model List<TodoApplication.Dto.UserListDto>
+@* @model List<TodoApplication.Dto.UserListDto> *@
+@* *@
+@* @{ *@
+@*     ViewData["Title"] = "Todos"; *@
+@* } *@
+@* *@
+@* <main class="content"> *@
+@*     <div class="container-fluid p-0"> *@
+@*         <div class="my-3 d-flex justify-content-between align-items-center"> *@
+@*             <h4 class="d-inline align-middle">User List</h4> *@
+@*             @if (User.IsInRole("SuperAdmin")) *@
+@*             { *@
+@*                 <a asp-action="Create" class="btn btn-outline-primary"> *@
+@*                     <i class="fas fa-plus"></i> Add User *@
+@*                 </a> *@
+@*             } *@
+@*              *@
+@*         </div> *@
+@* *@
+@*         <div class="table-responsive"> *@
+@*             <table class="table table-hover my-0"> *@
+@*                 <thead> *@
+@*                 <tr> *@
+@*                     <th>S.N</th> *@
+@*                     <th>Full Name</th> *@
+@*                     <th>Email</th> *@
+@*                     <th>Status</th> *@
+@*                     <th>Block Status</th> *@
+@*                     <th>Actions</th> *@
+@*                 </tr> *@
+@*                 </thead> *@
+@*                 <tbody> *@
+@*                 @if (Model.Any()) *@
+@*                 { *@
+@*                     int i = 1; *@
+@*                     foreach (var item in Model) *@
+@*                     { *@
+@*                          *@
+@*                         <tr> *@
+@*                             <td>@i</td> *@
+@*                             <td>@item.full_name</td> *@
+@*                             <td>@item.email</td> *@
+@*                             <td>@item.is_active</td> *@
+@*                             <td>@item.is_blocked</td> *@
+@*                             <td> *@
+@*                                 @if(User.IsInRole("SuperAdmin")) *@
+@*                                 { *@
+@*                                     <a asp-action="EditUser" asp-route-id="@item.user_id" *@
+@*                                        class="btn btn-sm btn-outline-secondary"> *@
+@*                                         <i class="fas fa-pencil"></i> Edit *@
+@*                                     </a> *@
+@*                                     <a asp-action="UserDelete" asp-route-id="@item.user_id" asp-controller="UserManagement"  class="btn btn-sm btn-outline-danger" method="post"> *@
+@*                                         <i class="fas fa-trash"></i> Delete *@
+@*                                     </a> *@
+@*                                 } *@
+@*                                 <a asp-action="UserDetails" asp-route-id="@item.user_id" *@
+@*                                    class="btn btn-sm btn-outline-info"> *@
+@*                                     <i class="fas fa-eye"></i> Details *@
+@*                                 </a> *@
+@*                             </td> *@
+@*                         </tr> *@
+@*                         i++; *@
+@*                     } *@
+@*                 } *@
+@*                 else *@
+@*                 { *@
+@*                     <tr> *@
+@*                         <td colspan="5" class="text-center">No Users Found</td> *@
+@*                     </tr> *@
+@*                 } *@
+@*                 </tbody> *@
+@*             </table> *@
+@*         </div> *@
+@*     </div> *@
+@* </main> *@
 
+@model List<TodoApplication.Dto.UserListDto>
 @{
-    ViewData["Title"] = "Todos";
+    ViewData["Title"] = "User Management";
 }
 
-<main class="content">
-    <div class="container-fluid p-0">
-        <div class="my-3 d-flex justify-content-between align-items-center">
-            <h4 class="d-inline align-middle">User List</h4>
-            @if (User.IsInRole("SuperAdmin"))
-            {
-                <a asp-action="Create" class="btn btn-outline-primary">
-                    <i class="fas fa-plus"></i> Add User
-                </a>
-            }
-            
-        </div>
+<style>
+    .user-card { border: none; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
+    .table thead th { background-color: #f8fafc; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; color: #64748b; border-top: none; }
+    .status-pill { padding: 4px 12px; border-radius: 50px; font-size: 0.75rem; font-weight: 600; }
+    .avatar-circle { width: 35px; height: 35px; background: #e2e8f0; color: #475569; display: flex; align-items: center; justify-content: center; border-radius: 50%; font-weight: bold; font-size: 0.8rem; }
+</style>
 
+<div class="container-fluid p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="fw-bold text-dark mb-0">User Management</h3>
+            <p class="text-muted small">Manage system users, roles, and access permissions.</p>
+        </div>
+        @if (User.IsInRole("SuperAdmin"))
+        {
+            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 shadow-sm">
+                <i class="bi bi-person-plus-fill me-2"></i>Add New User
+            </a>
+        }
+    </div>
+
+    <div class="card user-card">
         <div class="table-responsive">
-            <table class="table table-hover my-0">
+            <table class="table table-hover align-middle mb-0">
                 <thead>
-                <tr>
-                    <th>S.N</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
-                    <th>Status</th>
-                    <th>Block Status</th>
-                    <th>Actions</th>
-                </tr>
+                    <tr>
+                        <th class="ps-4">S.N</th>
+                        <th>Full Name</th>
+                        <th>Email Address</th>
+                        <th>Account Status</th>
+                        <th>Security</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                @if (Model.Any())
-                {
-                    int i = 1;
-                    foreach (var item in Model)
+                    @if (Model.Any())
                     {
-                        
+                        int i = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4 text-muted">@i.ToString("D2")</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="avatar-circle me-3">@item.full_name.Substring(0, 1).ToUpper()</div>
+                                        <span class="fw-semibold text-dark">@item.full_name</span>
+                                    </div>
+                                </td>
+                                <td class="text-muted">@item.email</td>
+                                <td>
+                                    @if (item.is_active)
+                                    {
+                                        <span class="status-pill bg-success bg-opacity-10 text-success border border-success">Active</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-pill bg-secondary bg-opacity-10 text-secondary border border-secondary">Inactive</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (item.is_blocked)
+                                    {
+                                        <span class="status-pill bg-danger bg-opacity-10 text-danger border border-danger"><i class="bi bi-lock-fill"></i> Blocked</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-pill bg-info bg-opacity-10 text-info border border-info"><i class="bi bi-shield-check"></i> Allowed</span>
+                                    }
+                                </td>
+                                <td class="text-end pe-4">
+                                    <div class="btn-group">
+                                        <a asp-action="UserDetails" asp-route-id="@item.user_id" class="btn btn-sm btn-light border mx-1 rounded shadow-sm" title="View Details">
+                                            <i class="bi bi-eye text-info"></i>
+                                        </a>
+                                        @if (User.IsInRole("SuperAdmin"))
+                                        {
+                                            <a asp-action="EditUser" asp-route-id="@item.user_id" class="btn btn-sm btn-light border mx-1 rounded shadow-sm" title="Edit">
+                                                <i class="bi bi-pencil text-primary"></i>
+                                            </a>
+                                            <form asp-action="UserDelete" asp-route-id="@item.user_id" method="post" class="d-inline" onsubmit="return confirm('Delete this user?');">
+                                                <button type="submit" class="btn btn-sm btn-light border mx-1 rounded shadow-sm" title="Delete">
+                                                    <i class="bi bi-trash text-danger"></i>
+                                                </button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                    else
+                    {
                         <tr>
-                            <td>@i</td>
-                            <td>@item.full_name</td>
-                            <td>@item.email</td>
-                            <td>@item.is_active</td>
-                            <td>@item.is_blocked</td>
-                            <td>
-                                @if(User.IsInRole("SuperAdmin"))
-                                {
-                                    <a asp-action="EditUser" asp-route-id="@item.user_id"
-                                       class="btn btn-sm btn-outline-secondary">
-                                        <i class="fas fa-pencil"></i> Edit
-                                    </a>
-                                    <a  href="@Url.Action("DeleteTodo", new { id = item.user_id })"  class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i> Delete
-                                    </a>
-                                }
-                                <a asp-action="UserDetails" asp-route-id="@item.user_id"
-                                   class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-eye"></i> Details
-                                </a>
+                            <td colspan="6" class="text-center py-5">
+                                <i class="bi bi-people text-muted opacity-25 d-block mb-2" style="font-size: 3rem;"></i>
+                                <span class="text-muted">No users found in the system.</span>
                             </td>
                         </tr>
-                        i++;
                     }
-                }
-                else
-                {
-                    <tr>
-                        <td colspan="5" class="text-center">No Users Found</td>
-                    </tr>
-                }
                 </tbody>
             </table>
         </div>
     </div>
-</main>
+</div>
