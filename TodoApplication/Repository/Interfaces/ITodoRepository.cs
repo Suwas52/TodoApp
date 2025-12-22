@@ -1,3 +1,4 @@
+using TodoApplication.Dto;
 using TodoApplication.Entities;
 
 namespace TodoApplication.Repository.Interfaces;
@@ -10,4 +11,6 @@ public interface ITodoRepository
     Task<Todos?> GetTodosByIdAsync(int id, CancellationToken ct);
     Task<List<Todos>> GetAllTodosAsync(CancellationToken ct);
     Task<List<Todos>> GetAllTodosByUser(Guid userId, CancellationToken ct);
+    Task<List<TodoListDto>> TodayTodoListByUserId(Guid userId, CancellationToken ct);
+    Task<List<TodoListDto>> TodayTodoLists(CancellationToken ct);
 }

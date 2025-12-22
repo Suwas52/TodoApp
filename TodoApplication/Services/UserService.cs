@@ -177,42 +177,58 @@ public class UserService : IUserService
         };
     }
 
-    // public async Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct)
-    // {
-    //     var user = await _usersRepository.GetUserByIdAsync(id, ct);
-    //     if (user == null)
-    //         return new Response
-    //         {
-    //             issucceed = false,
-    //             statusCode = 404,
-    //             message = "User not found.",
-    //         };
-    //     
-    //     user.first_name = dto.first_name;
-    //     user.last_name = dto.last_name;
-    //     user.email = dto.email;
-    //     user.password_hash = dto.password;
-    //     
-    // }
-
     public Task<Response> UserDeleteAsync(Guid id, CancellationToken ct)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Response> UserBlockAsync(Guid id, CancellationToken ct)
+    public async Task<Response> BlockUnBlockUser(Guid id, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = await _usersRepository.GetUserByIdAsync(id, ct);
+        if (user == null)
+            return new Response() 
+                { issucceed = false, 
+                    statusCode = 404, 
+                    message = "User not found." 
+                };
+
+        user.is_blocked = !user.is_blocked; 
+        user.updated_at = DateTime.UtcNow;
+
+        await _uow.SaveChangesAsync(ct);
+    
+        return new Response()
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = user.is_blocked ? "User Blocked successfully" : "User Unblocked successfully",
+        };
+    
     }
 
-    public Task<Response> UserUnblockAsync(Guid id, CancellationToken ct)
-    {
-        throw new NotImplementedException();
-    }
 
-    public Task<Response> UserActivateAsync(Guid id, CancellationToken ct)
+    public async Task<Response> UserActivateInactive(Guid id, CancellationToken ct)
     {
-        throw new NotImplementedException();
+        var user = await _usersRepository.GetUserByIdAsync(id, ct);
+        if (user == null)
+            return new Response()
+            {
+                issucceed = false, 
+                statusCode = 404, 
+                message = "User not found."
+            };
+        
+        user.is_active = !user.is_active; 
+        user.updated_at = DateTime.UtcNow;
+
+        await _uow.SaveChangesAsync(ct);
+    
+        return new Response()
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = user.is_active ? "User Active successfully" : "User Inactive successfully",
+        };
     }
 
     public async Task<List<UserListDto>> GetAllUsersAsync(CancellationToken ct)

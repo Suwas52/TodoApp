@@ -89,6 +89,23 @@ public class UserManagementController : Controller
         var userDetail = await _userService.GetUserByIdAsync(id, ct);
         return View(userDetail);
     }
+
+    [HttpPost] 
+    public async Task<IActionResult> BlockUnblockUser(Guid id, CancellationToken ct)
+    {
+        var result = await _userService.BlockUnBlockUser(id, ct);
+        
+        return RedirectToAction(nameof(UserDetails), new { id = id });
+    }
+    
+    
+    [HttpPost] 
+    public async Task<IActionResult> ActiveInactiveUser(Guid id, CancellationToken ct)
+    {
+        var result = await _userService.UserActivateInactive(id, ct);
+        
+        return RedirectToAction(nameof(UserDetails), new { id = id });
+    }
     
 
 }

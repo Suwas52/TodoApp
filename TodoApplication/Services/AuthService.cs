@@ -15,14 +15,17 @@ public class AuthService : IAuthService
     private readonly IUnitOfWork _uow;
     private readonly IUsersRepository _usersRepo;
     private readonly ISystemInfoFromCookie _cookieInfo;
+    private readonly IDashbordCardRepo _dashboard;
     public AuthService(
         IUnitOfWork uow,
         IUsersRepository usersRepo,
-        ISystemInfoFromCookie cookieInfo)
+        ISystemInfoFromCookie cookieInfo,
+        IDashbordCardRepo dashboard)
     {
         _uow = uow;
         _usersRepo = usersRepo;
         _cookieInfo = cookieInfo;
+        _dashboard = dashboard;
     }
    
     public async Task<ClaimsPrincipal?> LoginAsync(LoginDto dto, CancellationToken ct)
@@ -94,6 +97,15 @@ public class AuthService : IAuthService
             message = "Profile updated successfully updated.",
         };
 
+    }
+
+    public async Task<DashboardCardDto> DashboardCard(CancellationToken ct)
+    {
+        if (_cookieInfo.IsSuperAdmin || _cookieInfo.IsManager)
+        {
+            return await _dashboard.AdminDashboardCard(ct);
+        }
+        return await _dashboard.UserDashboardCard(_cookieInfo.user_id,ct);
     }
     
 

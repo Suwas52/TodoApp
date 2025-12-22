@@ -1,8 +1,300 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using TodoApplication.Enum
+@using TodoApplication.Identity
+@inject ISystemInfoFromCookie CookieInfo
+@model TodoApplication.Dto.dashboard;
+@{
+    ViewData["Title"] = "Dashboard";
+    // Check roles from injected cookie helper
+    bool isPrivileged = CookieInfo.IsSuperAdmin || CookieInfo.IsManager;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    /* Gradient Palette */
+    .bg-gradient-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .bg-gradient-success { background: linear-gradient(135deg, #2af598 0%, #009efd 100%); }
+    .bg-gradient-info { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+    .bg-gradient-warning { background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); }
+    .bg-gradient-danger { background: linear-gradient(135deg, #ff0844 0%, #ffb199 100%); }
+    .bg-gradient-secondary { background: linear-gradient(135deg, #434343 0%, #000000 100%); }
+
+    .stat-card {
+        border: none;
+        border-radius: 15px;
+        color: white;
+        transition: transform 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .stat-card:hover { transform: translateY(-5px); }
+
+    .icon-circle {
+        width: 48px;
+        height: 48px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+    }
+</style>
+
+<div class="container-fluid p-4">
+    <div class="mb-4">
+        <h2 class="fw-bold text-dark">@(isPrivileged ? "Administrator Dashboard" : "My Dashboard")</h2>
+        @* <p class="text-muted">Welcome back! Here is what's happening today.</p> *@
+    </div>
+
+    <div class="row g-4 mb-5">
+        @if (isPrivileged)
+        {
+            @* --- ADMIN / MANAGER VIEW (6 Cards) --- *@
+            
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-primary p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.total_user_counts</h2>
+                            <small class="opacity-75">Registered Users</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-people"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-success p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.active_user_counts</h2>
+                            <small class="opacity-75">Active Users</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-person-check"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-info p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.total_todo_counts</h2>
+                            <small class="opacity-75">Total Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-list-task"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-danger p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.high_priority_todo_counts</h2>
+                            <small class="opacity-75">High Priority Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-exclamation-octagon"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-warning p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.pending_todo_counts</h2>
+                            <small class="opacity-75">Pending Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-hourglass-split"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-secondary p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.blocked_user_counts</h2>
+                            <small class="opacity-75">Blocked Accounts</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-shield-slash"></i></div>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            @* --- STANDARD USER VIEW (6 Cards) --- *@
+            
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-primary p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.total_todo_counts</h2>
+                            <small class="opacity-75">My Total Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-journal-text"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-success p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.completed_todo_counts</h2>
+                            <small class="opacity-75">Todos Completed</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-check2-all"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-info p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.pending_todo_counts</h2>
+                            <small class="opacity-75">Pending Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-clock"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-danger p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.high_priority_todo_counts</h2>
+                            <small class="opacity-75">High Priority Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-fire"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-warning p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.urgent_todo_counts</h2>
+                            <small class="opacity-75">Urgent Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-lightning-charge"></i></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card stat-card bg-gradient-secondary p-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <h2 class="fw-bold mb-0">@Model.dashboard_card.expired_todo_counts</h2>
+                            <small class="opacity-75">Expired Todos</small>
+                        </div>
+                        <div class="icon-circle"><i class="bi bi-person-badge"></i></div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @* --- TABLE SECTION --- *@
+   <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+    <div class="card-header bg-white py-3 border-0 d-flex justify-content-between align-items-center">
+        <h5 class="fw-bold mb-0 text-dark">Recent Activity Overview</h5>
+        <a asp-action="Index" asp-controller="Todo" class="btn btn-sm btn-link text-decoration-none">View All Activity</a>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light">
+                <tr class="text-muted small text-uppercase">
+                    <th class="ps-4">S.N</th>
+                    <th>User</th>
+                    <th>Todo Item</th>
+                    <th>Priority</th>
+                    <th>Status</th>
+                    <th class="text-center pe-4">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int serial = 1; }
+                @foreach (var item in Model.todo_list)
+                {
+                    <tr>
+                        <td class="ps-4 text-muted">@(serial++)</td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle me-2 d-flex align-items-center justify-content-center" style="width:32px; height:32px; font-size:12px; font-weight:bold;">
+                                    @item.username.Substring(0, 1).ToUpper()
+                                </div>
+                                <span class="fw-medium">@item.username</span>
+                            </div>
+                        </td>
+                        <td>@item.title</td>
+                        <td>
+                            @switch (item.priority)
+                            {
+                                case todo_priority.High:
+                                case todo_priority.Urgent:
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger px-3 rounded-pill">
+                                        <i class="bi bi-arrow-up-circle-fill me-1"></i> @item.priority
+                                    </span>
+                                    break;
+                                case todo_priority.Medium:
+                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning px-3 rounded-pill">
+                                        <i class="bi bi-dash-circle-fill me-1"></i> @item.priority
+                                    </span>
+                                    break;
+                                default:
+                                    <span class="badge bg-info bg-opacity-10 text-info border border-info px-3 rounded-pill">
+                                        <i class="bi bi-arrow-down-circle-fill me-1"></i> @item.priority
+                                    </span>
+                                    break;
+                            }
+                        </td>
+                        <td>
+                            @switch (item.status)
+                            {
+                                case todo_status.Completed:
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success px-3 rounded-pill">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Done
+                                    </span>
+                                    break;
+                                case todo_status.Pending:
+                                    <span class="badge bg-info bg-opacity-10 text-info border border-info px-3 rounded-pill">
+                                        <i class="bi bi-clock-history me-1"></i> Pending
+                                    </span>
+                                    break;
+                                default:
+                                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary px-3 rounded-pill">
+                                        @item.status
+                                    </span>
+                                    break;
+                            }
+                        </td>
+                        <td class="text-center pe-4">
+                            <div class="dropdown">
+                                <button class="btn btn-sm btn-light rounded-circle shadow-sm" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu shadow border-0">
+                                    <li><a class="dropdown-item" asp-action="Details" asp-controller="Todo" asp-route-id="@item.id"><i class="bi bi-eye me-2"></i>View</a></li>
+                                    <li><a class="dropdown-item" asp-action="Edit" asp-controller="Todo" asp-route-id="@item.id"><i class="bi bi-pencil me-2"></i>Edit</a></li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+                @if (!Model.todo_list.Any())
+                {
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted small">No tasks found for today.</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
 </div>

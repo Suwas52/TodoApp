@@ -108,4 +108,13 @@ public class TodoService : ITodoService
             message = "Todo Deleted Successfully",
         };
     }
+
+    public async Task<List<TodoListDto>> RecentTodos(CancellationToken ct)
+    {
+        if (_cookieInfo.IsSuperAdmin || _cookieInfo.IsManager)
+        {
+            return await _todoRepository.TodayTodoLists(ct);
+        }
+        return await _todoRepository.TodayTodoListByUserId(_cookieInfo.user_id, ct);
+    }
 }

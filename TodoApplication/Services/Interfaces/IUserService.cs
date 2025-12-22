@@ -9,9 +9,8 @@ public interface IUserService
     Task<Response> RegisterUser(UserCreateDto dto, CancellationToken ct);
     //Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct);
     Task<Response> UserDeleteAsync(Guid id,  CancellationToken ct);
-    Task<Response> UserBlockAsync(Guid id, CancellationToken ct);
-    Task<Response> UserUnblockAsync(Guid id, CancellationToken ct);
-    Task<Response> UserActivateAsync(Guid id, CancellationToken ct);
+    Task<Response> BlockUnBlockUser(Guid id, CancellationToken ct);
+    Task<Response> UserActivateInactive(Guid id, CancellationToken ct);
     Task<List<UserListDto>>  GetAllUsersAsync(CancellationToken ct);
     Task<UserDetailDto?> GetUserByIdAsync(Guid id, CancellationToken ct);
     Task<Response> AdminAddUserAsync(AdminAddUserDto dto, CancellationToken ct);

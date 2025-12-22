@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using TodoApplication.Data;
+using TodoApplication.Dto;
 using TodoApplication.Entities;
 using TodoApplication.Repository.Interfaces;
 
@@ -50,6 +51,39 @@ public class TodosRepository : ITodoRepository
     {
         return await _context.Todos
             .Where(t => t.user_id == userId && !t.is_deleted)
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<TodoListDto>> TodayTodoListByUserId(Guid userId, CancellationToken ct)
+    {
+        return await _context.Todos
+            .Where(t => t.user_id == userId && !t.is_deleted && t.created_at.Day == DateTime.Now.Day)
+            .Select(t => new TodoListDto
+            {
+                id = t.id,
+                title = t.title,
+                username = t.createdTodoUser.first_name + " " + t.createdTodoUser.last_name,
+                created_at = t.created_at,
+                status = t.status,
+                priority = t.priority,
+            })
+            .ToListAsync(ct);
+    }
+
+    public async Task<List<TodoListDto>> TodayTodoLists(CancellationToken ct)
+    {
+        return await _context.Todos
+            .Where(t => !t.is_deleted)
+            .Select(t => new TodoListDto
+            {
+                id = t.id,
+                title = t.title,
+                username = t.createdTodoUser.first_name + " " + t.createdTodoUser.last_name,
+                created_at = t.created_at,
+                status = t.status,
+                priority = t.priority,
+            })
+            .AsNoTracking()
             .ToListAsync(ct);
     }
 }

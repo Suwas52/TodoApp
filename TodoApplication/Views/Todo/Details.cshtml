@@ -1,54 +1,179 @@
 @model TodoApplication.Entities.Todos
+@using TodoApplication.Enum
 
 @{
-    ViewData["Title"] = "Todo Details";
+    ViewData["Title"] = "Task: " + Model.title;
+    
+    // Logic to determine header color based on priority
+    string headerClass = Model.priority switch {
+        todo_priority.Urgent => "bg-gradient-danger",
+        todo_priority.High => "bg-gradient-warning-dark",
+        _ => "bg-gradient-primary-dark"
+    };
 }
 
-<div class="container mt-4">
-    <div class="card shadow-sm">
-        <div class="card-header bg-primary text-white">
-            <h5 class="mb-0">Todo Details</h5>
-        </div>
+<style>
+    /* Custom Gradients for Todo Importance */
+    .bg-gradient-danger { background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%); }
+    .bg-gradient-warning-dark { background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%); }
+    .bg-gradient-primary-dark { background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 100%); }
 
-        <div class="card-body">
-            <dl class="row">
-                <dt class="col-sm-3">Title</dt>
-                <dd class="col-sm-9">@Model.title</dd>
+    .card-todo {
+        border: none;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
 
-                <dt class="col-sm-3">Description</dt>
-                <dd class="col-sm-9">
-                    <div class="border rounded p-2 bg-light">
-                        @Model.description
+    .todo-header {
+        padding: 40px 30px;
+        color: white;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        border-radius: 12px;
+        padding: 20px;
+        height: 100%;
+        border: 1px solid #e2e8f0;
+    }
+
+    .label-sm {
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #94a3b8;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 5px;
+    }
+
+    .description-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #334155;
+        white-space: pre-line;
+    }
+
+    .status-badge-lg {
+        padding: 8px 16px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="mb-4">
+        <a asp-action="TodoList" class="text-decoration-none text-muted small fw-bold">
+            <i class="bi bi-arrow-left me-1"></i> BACK TO MY TASKS
+        </a>
+    </div>
+
+    <div class="card card-todo">
+        <div class="todo-header @headerClass">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <span class="badge bg-white bg-opacity-25 rounded-pill px-3">
+                            <i class="bi bi-tag-fill me-1"></i> Task ID: #@Model.id
+                        </span>
+                        @if (Model.priority == todo_priority.Urgent)
+                        {
+                            <span class="badge bg-white text-danger rounded-pill px-3">
+                                <i class="bi bi-lightning-fill me-1"></i> URGENT
+                            </span>
+                        }
                     </div>
-                </dd>
-
-                <dt class="col-sm-3">Priority</dt>
-                <dd class="col-sm-9">
-                    <span class="badge bg-warning text-dark">
-                        @Model.priority
-                    </span>
-                </dd>
-
-                <dt class="col-sm-3">Status</dt>
-                <dd class="col-sm-9">
-                    <span class="badge bg-info">
-                        @Model.status
-                    </span>
-                </dd>
-
-                <dt class="col-sm-3">Created At</dt>
-                <dd class="col-sm-9">@Model.created_at</dd>
-            </dl>
+                    <h2 class="fw-bold mb-0">@Model.title</h2>
+                </div>
+                
+                <div class="dropdown">
+                    <button class="btn btn-light btn-sm rounded-circle shadow-sm" style="width: 40px; height: 40px;" data-bs-toggle="dropdown">
+                        <i class="bi bi-three-dots-vertical"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                        <li><a class="dropdown-item" asp-action="Edit" asp-route-id="@Model.id"><i class="bi bi-pencil me-2"></i>Edit Task</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-trash me-2"></i>Delete</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
-        <div class="card-footer d-flex justify-content-end">
-            <a asp-action="Edit" asp-route-id="@Model.id"
-               class="btn btn-outline-secondary me-2">
-                Edit
-            </a>
-            <a asp-action="TodoList" class="btn btn-outline-primary">
-                Back
-            </a>
+        <div class="card-body p-4 p-md-5">
+            <div class="row g-4">
+                <div class="col-md-8">
+                    <div class="mb-4">
+                        <span class="label-sm">Detailed Description</span>
+                        <div class="description-text">
+                            @(string.IsNullOrEmpty(Model.description) ? "No description provided for this task." : Model.description)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="info-box">
+                        <div class="mb-4">
+                            <span class="label-sm">Task Status</span>
+                            @if (Model.status == todo_status.Completed)
+                            {
+                                <span class="status-badge-lg bg-success bg-opacity-10 text-success border border-success">
+                                    <i class="bi bi-check-circle-fill me-2"></i>Completed
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="status-badge-lg bg-info bg-opacity-10 text-info border border-info">
+                                    <i class="bi bi-clock-history me-2"></i>@Model.status
+                                </span>
+                            }
+                        </div>
+
+                        <div class="mb-4">
+                            <span class="label-sm">Priority Level</span>
+                            @{
+                                var pColor = Model.priority == todo_priority.High || Model.priority == todo_priority.Urgent ? "text-danger" : "text-primary";
+                                var pIcon = Model.priority == todo_priority.High || Model.priority == todo_priority.Urgent ? "bi-graph-up-arrow" : "bi-list-task";
+                            }
+                            <div class="d-flex align-items-center fw-bold @pColor">
+                                <i class="bi @pIcon me-2"></i> @Model.priority
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <span class="label-sm">Created On</span>
+                            <div class="fw-medium text-dark">
+                                <i class="bi bi-calendar3 me-2 text-muted"></i>@Model.created_at.ToString("MMM dd, yyyy")
+                            </div>
+                            <div class="text-muted small mt-1">
+                                <i class="bi bi-clock me-2"></i>@Model.created_at.ToString("hh:mm tt")
+                            </div>
+                        </div>
+
+                        <div>
+                            <span class="label-sm">Assigned To</span>
+                            <div class="d-flex align-items-center mt-2">
+                                <div class="bg-primary bg-opacity-10 text-primary rounded-circle me-2 d-flex align-items-center justify-content-center fw-bold" style="width:35px; height:35px; font-size:12px">
+                                    @Model.created_by.Substring(0, 1).ToUpper()
+                                </div>
+                                <span class="fw-medium">@Model.created_by</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer bg-light p-4 d-flex justify-content-between align-items-center border-0">
+            <span class="text-muted small">
+                Last updated: @(Model.updated_at != default ? Model.updated_at.ToString("MMM dd, yyyy HH:mm") : "Never")
+            </span>
+            <div class="d-flex gap-2">
+                <a asp-action="Edit" asp-route-id="@Model.id" class="btn btn-primary px-4 rounded-pill">
+                    <i class="bi bi-pencil-square me-2"></i>Edit Task
+                </a>
+            </div>
         </div>
     </div>
 </div>

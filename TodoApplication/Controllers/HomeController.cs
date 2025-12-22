@@ -1,7 +1,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TodoApplication.Dto;
 using TodoApplication.Models;
+using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
 
@@ -9,15 +11,28 @@ namespace TodoApplication.Controllers;
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    private readonly IAuthService _authService;
+    private readonly ITodoService _todoService;
+    public HomeController(
+        IAuthService authService,
+        ILogger<HomeController> logger,
+        ITodoService todoService)
     {
+        _authService = authService;
         _logger = logger;
+        _todoService = todoService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index(CancellationToken ct = default)
     {
-        return View();
+        var dashboardCard = await _authService.DashboardCard(ct);
+        var recenttodo = await _todoService.RecentTodos(ct);
+        var dashboard = new dashboard
+        {
+            dashboard_card = dashboardCard,
+            todo_list = recenttodo
+        };
+        return View(dashboard);
     }
 
     public IActionResult Privacy()

@@ -28,7 +28,7 @@ builder.Services.AddScoped<IRoleSeeder, RoleSeeder>();
 builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<IDashbordCardRepo, DashbordCardRepo>();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISystemInfoFromCookie, SystemInfoFromCookie>();
 
