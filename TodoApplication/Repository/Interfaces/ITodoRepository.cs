@@ -9,4 +9,5 @@ public interface ITodoRepository
     Task DeleteTodoAsync(Todos todos, CancellationToken ct);
     Task<Todos?> GetTodosByIdAsync(int id, CancellationToken ct);
     Task<List<Todos>> GetAllTodosAsync(CancellationToken ct);
+    Task<List<Todos>> GetAllTodosByUser(Guid userId, CancellationToken ct);
 }

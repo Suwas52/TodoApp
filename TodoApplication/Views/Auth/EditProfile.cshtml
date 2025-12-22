@@ -1,0 +1,119 @@
+@using TodoApplication.Enum
+@model TodoApplication.Dto.UserUpdateDto;
+@{
+    ViewBag.Title = "Edit Profile";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold text-dark">Edit Profile</h2>
+                <a asp-action="Profile" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Profile
+                </a>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body p-4">
+                    
+                    <form method="post">
+                        @* <div class="text-center mb-5"> *@
+                        @*     <div class="position-relative d-inline-block"> *@
+                        @*         <img src="https://i.pravatar.cc/150?img=5" class="rounded-circle border border-3 border-white shadow-sm" style="width: 120px; height: 120px; object-fit: cover;"> *@
+                        @*          *@
+                        @*         <label for="avatarUpload" class="position-absolute bottom-0 end-0 bg-primary text-white p-2 rounded-circle shadow-sm cursor-pointer hover-scale" style="cursor: pointer; transform: translate(10%, 10%);"> *@
+                        @*             <i class="bi bi-camera-fill"></i> *@
+                        @*         </label> *@
+                        @*         <input type="file" id="avatarUpload" class="d-none"> *@
+                        @*     </div> *@
+                        @*     <p class="text-muted small mt-2">Allowed *.jpeg, *.jpg, *.png, max 3MB</p> *@
+                        @* </div> *@
+
+                        <div class="row g-4">
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">First Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                    <input asp-for="first_name" type="text" class="form-control border-start-0 ps-0" placeholder="Enter your first name">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Last Name</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                    <input asp-for="last_name" type="text" class="form-control border-start-0 ps-0" placeholder="Enter your last name">
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email Address</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                    <input asp-for="email" type="email" class="form-control border-start-0 ps-0 text-muted bg-light" readonly title="You cannot change email">
+                                </div>
+                                <div class="form-text">To change email, please contact support.</div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-telephone"></i></span>
+                                    <input asp-for="phone_number" type="tel" class="form-control border-start-0 ps-0" >
+                                </div>
+                            </div>
+
+                            <div class="col-12"><hr class="text-muted opacity-25"></div>
+
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold d-block">Gender</label>
+                                <div class="btn-group w-100" role="group">
+        
+                                    <input type="radio" asp-for="gender" value="@user_gender.Male" class="btn-check" id="genderMale">
+                                    <label class="btn btn-outline-primary" for="genderMale">
+                                        <i class="bi bi-gender-male me-1"></i> Male
+                                    </label>
+
+                                    <input type="radio" asp-for="gender" value="@user_gender.Female" class="btn-check" id="genderFemale">
+                                    <label class="btn btn-outline-primary" for="genderFemale">
+                                        <i class="bi bi-gender-female me-1"></i> Female
+                                    </label>
+
+                                    <input type="radio" asp-for="gender" value="@user_gender.Other" class="btn-check" id="genderOther">
+                                    <label class="btn btn-outline-primary" for="genderOther">Other</label>
+                                </div>
+                            </div>
+
+                            @* <div class="col-md-6"> *@
+                            @*     <label class="form-label fw-semibold">Role</label> *@
+                            @*     <div class="input-group"> *@
+                            @*         <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-lock"></i></span> *@
+                            @*         <select class="form-select border-start-0 ps-0"> *@
+                            @*             <option value="user">Standard User</option> *@
+                            @*             <option value="manager" selected>Manager</option> *@
+                            @*             <option value="admin">Administrator</option> *@
+                            @*         </select> *@
+                            @*     </div> *@
+                            @* </div> *@
+
+                            <div class="col-12">
+                                <label class="form-label fw-semibold">Address</label>
+                                <textarea asp-for="address" class="form-control" rows="3" ></textarea>
+                            </div>
+
+                        </div>
+
+                        <div class="d-flex justify-content-end gap-3 mt-5">
+                            <button type="button" class="btn btn-light border">Cancel</button>
+                            <button type="submit" class="btn btn-primary px-4 fw-bold">Save Changes</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -5,6 +5,7 @@ namespace TodoApplication.Entities;
 public sealed class Todos
 {
     public int id { get; set; }
+    public Guid user_id { get; set; }
     public string title { get; set; }
     public string description { get; set; }
     public todo_status status { get; set; }
@@ -14,6 +15,6 @@ public sealed class Todos
     public string created_by { get; set; }
     public DateTime updated_at { get; set; }
     public string updated_by { get; set; }
-    
-    
+
+    public Users createdTodoUser  { get; set; }
 }

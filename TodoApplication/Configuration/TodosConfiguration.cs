@@ -20,5 +20,10 @@ public sealed class TodosConfiguration : IEntityTypeConfiguration<Todos>
         builder.Property(t => t.created_by).HasMaxLength(255).IsRequired();
         builder.Property(t => t.updated_at).IsRequired();
         builder.Property(t => t.updated_by).HasMaxLength(255).IsRequired(false);
+        
+        builder.HasOne(t => t.createdTodoUser)
+            .WithMany(t => t.todos)
+            .HasForeignKey(t => t.user_id)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }

@@ -2,7 +2,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 //using Microsoft.AspNetCore.Authentication.
 using TodoApplication.Dto;
+using TodoApplication.Dto.User;
 using TodoApplication.Helper;
+using TodoApplication.Identity;
 using TodoApplication.Repository.Interfaces;
 using TodoApplication.Services.Interfaces;
 
@@ -12,12 +14,15 @@ public class AuthService : IAuthService
 {
     private readonly IUnitOfWork _uow;
     private readonly IUsersRepository _usersRepo;
+    private readonly ISystemInfoFromCookie _cookieInfo;
     public AuthService(
         IUnitOfWork uow,
-        IUsersRepository usersRepo)
+        IUsersRepository usersRepo,
+        ISystemInfoFromCookie cookieInfo)
     {
         _uow = uow;
         _usersRepo = usersRepo;
+        _cookieInfo = cookieInfo;
     }
    
     public async Task<ClaimsPrincipal?> LoginAsync(LoginDto dto, CancellationToken ct)
@@ -45,8 +50,51 @@ public class AuthService : IAuthService
             claims,
             CookieAuthenticationDefaults.AuthenticationScheme
         );
+        
+        user.last_login_date = DateTime.UtcNow;
+        await _uow.SaveChangesAsync(ct);
 
         return new ClaimsPrincipal(identity);
     }
+
+    public async Task<UserDetailDto?> UserProfileDetail(CancellationToken ct)
+    {
+        var userId = _cookieInfo.user_id;
+
+        var user = await _usersRepo.GetUserByIdAsync(userId, ct);
+        if (user == null)
+            return null;
+        var mapData = UserMapping.ToDto(user);
+        return mapData;
+    }
+    public async Task<Response> UpdateUserAsync(Guid user_id, UserUpdateDto dto, CancellationToken ct)
+    {
+        var user = await _usersRepo.GetUserByIdAsync(user_id, ct);
+        if (user == null)
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 404,
+                message = "User not found.",
+            };
+        
+        user.first_name = dto.first_name;
+        user.last_name = dto.last_name;
+        user.email = dto.email;
+        user.address = dto.address;
+        user.gender = dto.gender;
+        user.phone_number = dto.phone_number;
+        user.updated_at = DateTime.UtcNow;
+        
+        await _uow.SaveChangesAsync(ct);
+        return new Response
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = "Profile updated successfully updated.",
+        };
+
+    }
+    
 
 }

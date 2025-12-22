@@ -1,86 +1,126 @@
+@model TodoApplication.Dto.UserDetailDto;
 @{
-
-    ViewBag.Title = "Profile";
+    ViewBag.Title = "User Profile";
 }
-@{
 
-    ViewBag.Title = "Change Password";
-}
 <div class="container py-5">
-    <h2 class="fw-bold mb-4">Profile</h2>
-    <div class="card p-4">
-               <div class="profile-header"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-dark">Profile Details</h2>
+        <a asp-action="EditProfile" asp-controller="Auth" class="btn btn-outline-primary">
+            <i class="bi bi-pencil-square" ></i> Edit Profile
+        </a>
+    </div>
 
-                <div class="d-flex justify-content-between align-items-start px-3">
-                    <div class="d-flex align-items-center gap-3">
-                        <img src="https://i.pravatar.cc/100?img=5" class="avatar">
-                        <div>
-                            <h6 class="mb-0 fw-bold">Alexa Rawles</h6>
-                            <small class="text-muted">alexarawles@gmail.com</small>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary">Edit</button>
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-light bg-gradient p-4 border-0 rounded-top-4">
+            <div class="d-flex align-items-center gap-4">
+                <div class="position-relative">
+                    <img src="https://i.pravatar.cc/150?img=5" class="rounded-circle border border-4 border-white shadow-sm" style="width: 100px; height: 100px; object-fit: cover;">
+                    <span class="position-absolute bottom-0 start-100 translate-middle p-2 bg-success border border-light rounded-circle">
+                        <span class="visually-hidden">Active</span>
+                    </span>
                 </div>
-
-                <!-- Form -->
-                <div class="row mt-4 g-4">
-                    <div class="col-md-6">
-                        <label class="form-label">First Name</label>
-                        <input type="text" class="form-control" placeholder="Your First Name">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Last Name</label>
-                        <input type="text" class="form-control" placeholder="Your First Name">
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Gender</label>
-                        <select class="form-select">
-                            <option>Your Gender</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Country</label>
-                        <select class="form-select">
-                            <option>Your Country</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Language</label>
-                        <select class="form-select">
-                            <option>Your Language</option>
-                        </select>
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label">Time Zone</label>
-                        <select class="form-select">
-                            <option>Your Time Zone</option>
-                        </select>
+                <div>
+                    <h3 class="fw-bold mb-0">@Model.first_name @Model.last_name</h3>
+                    @* <p class="text-muted mb-0">@Model.address</p> *@
+                    <div class="d-flex align-items-center gap-2 mt-1">
+                        <i class="bi bi-geo-alt-fill text-danger"></i>
+                        <small class="text-secondary">@Model.address</small>
                     </div>
                 </div>
+            </div>
+        </div>
 
-                <!-- Email Section -->
-                <div class="mt-4">
-                    <h6 class="fw-bold">My email Address</h6>
-
-                    <div class="email-box d-flex justify-content-between align-items-center mt-2">
-                        <div class="d-flex align-items-center gap-2">
-                            <i class="bi bi-envelope-fill text-primary"></i>
-                            <div>
-                                <div class="fw-semibold">alexarawles@gmail.com</div>
-                                <small class="text-muted">1 month ago</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    
+        <div class="card-body p-4">
+            <div class="row g-4">
+                
+                <div class="col-12">
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-person-lines-fill me-2"></i>Personal Information</h5>
                 </div>
 
-            </div>    
+                <div class="col-md-6 col-lg-3">
+                    <label class="text-muted small text-uppercase fw-semibold">First Name</label>
+                    <p class="fs-5 fw-medium text-dark">@Model.first_name</p>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <label class="text-muted small text-uppercase fw-semibold">Last Name</label>
+                    <p class="fs-5 fw-medium text-dark">@Model.last_name</p>
+                </div>
+
+                <div class="col-md-6 col-lg-6">
+                    <label class="text-muted small text-uppercase fw-semibold">Email Address</label>
+                    <p class="fs-5 fw-medium text-dark">
+                        @Model.email
+                        <i class="bi bi-check-circle-fill text-success ms-1" title="Verified"></i>
+                    </p>
+                </div>
+
+                <div class="col-12"><hr class="text-muted opacity-25"></div>
+
+                <div class="col-12">
+                    <h5 class="fw-bold text-primary mb-3"><i class="bi bi-shield-lock-fill me-2"></i>Account Details</h5>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small text-uppercase fw-semibold d-block mb-2">Assigned Roles</label>
+                    <div class="d-flex flex-wrap gap-2">
+                        @foreach (var modelRole in Model.roles)
+                        {
+                            // 1. Determine Icon and Color based on Role Name
+                            string iconClass = "bi-person-fill"; // Default icon (User)
+                            string badgeColorClass = "bg-secondary text-secondary border-secondary"; // Default gray style
+
+                            // Convert to lower case for safer comparison
+                            var rName = modelRole.role_Name?.ToLower() ?? ""; 
+
+                            if (rName.Contains("superadmin"))
+                            {
+                                iconClass = "bi-shield-lock-fill"; // Admin Icon
+                                badgeColorClass = "bg-primary text-primary border-primary"; // Blue style
+                            }
+                            else if (rName.Contains("manager"))
+                            {
+                                iconClass = "bi-briefcase-fill"; // Manager Icon
+                                badgeColorClass = "bg-info text-info border-info"; // Cyan style
+                            }
+                            else if (rName.Contains("user"))
+                            {
+                                iconClass = "bi-people-fill"; // HR Icon
+                                badgeColorClass = "bg-success text-success border-success"; // Green style
+                            }
+
+                            // 2. Render the Badge
+                            <span class="badge rounded-pill bg-opacity-10 border px-3 py-2 @badgeColorClass">
+                                <i class="bi @iconClass me-1"></i> @modelRole.role_Name
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="text-muted small text-uppercase fw-semibold d-block mb-2">Gender</label>
+                    <div class="d-flex align-items-center">
+                        <span class="badge bg-light text-dark border px-3 py-2 rounded-3">
+                            <i class="bi bi-gender-female text-danger me-2 fs-6"></i> 
+                            @Model.gender
+                        </span>
+                    </div>
+                </div>
+
+                <div class="col-12"><hr class="text-muted opacity-25"></div>
+
+                <div class="col-md-6">
+                     <label class="text-muted small text-uppercase fw-semibold">Phone Number</label>
+                     <p class="mb-0">@Model.phone_number</p>
+                </div>
+                 <div class="col-md-6">
+                     <label class="text-muted small text-uppercase fw-semibold">Last Login</label>
+                     <p class="mb-0">@Model.last_login_date</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
-
          

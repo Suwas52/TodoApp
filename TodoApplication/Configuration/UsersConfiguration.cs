@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TodoApplication.Entities;
+using TodoApplication.Enum;
 
 namespace TodoApplication.Configuration;
 
@@ -14,6 +15,9 @@ public sealed class UsersConfiguration : IEntityTypeConfiguration<Users>
         builder.Property(u => u.email).HasMaxLength(255).IsRequired();
         builder.Property(u => u.first_name).HasMaxLength(255).IsRequired();
         builder.Property(u => u.last_name).HasMaxLength(255).IsRequired();
+        builder.Property(u => u.gender).HasDefaultValue(user_gender.Male).IsRequired();
+        builder.Property(u => u.address).HasMaxLength(255).IsRequired(false);
+        builder.Property(u => u.phone_number).HasMaxLength(15).IsRequired(false);
         builder.Property(u => u.password_hash).HasMaxLength(500).IsRequired();
         builder.Property(u => u.is_active).HasDefaultValue(true).IsRequired();
         builder.Property(u => u.is_deleted).HasDefaultValue(false).IsRequired();
@@ -27,5 +31,7 @@ public sealed class UsersConfiguration : IEntityTypeConfiguration<Users>
         builder.Property(u => u.password_change_date).IsRequired(false);
         
         builder.HasIndex(u => u.email).IsUnique();
+        
+        
     }
 }

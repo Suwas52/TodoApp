@@ -39,13 +39,16 @@
                             <td>@item.is_active</td>
                             <td>@item.is_blocked</td>
                             <td>
-                                <a asp-action="EditUser" asp-route-id="@item.user_id"
-                                   class="btn btn-sm btn-outline-secondary">
-                                    <i class="fas fa-pencil"></i> Edit
-                                </a>
-                                <a  href="@Url.Action("DeleteTodo", new { id = item.user_id })"  class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i> Delete
-                                </a>
+                                @if(User.IsInRole("SuperAdmin"))
+                                {
+                                    <a asp-action="EditUser" asp-route-id="@item.user_id"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        <i class="fas fa-pencil"></i> Edit
+                                    </a>
+                                    <a  href="@Url.Action("DeleteTodo", new { id = item.user_id })"  class="btn btn-sm btn-outline-danger">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                }
                                 <a asp-action="UserDetails" asp-route-id="@item.user_id"
                                    class="btn btn-sm btn-outline-info">
                                     <i class="fas fa-eye"></i> Details

@@ -5,8 +5,7 @@ using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
 
-[Authorize(Roles = "SuperAdmin")]
-//[Authorize]
+[Authorize]
 public class UserManagementController : Controller
 {
     // GET
@@ -17,6 +16,7 @@ public class UserManagementController : Controller
         _userService = userService;
     }
     
+    [Authorize(Roles = "SuperAdmin,Manager")]
     public async Task<IActionResult> UserList(CancellationToken ct)
     {
         var userlist = await _userService.GetAllUsersAsync(ct);

@@ -1,6 +1,7 @@
 using TodoApplication.Dto;
 using TodoApplication.Entities;
 using TodoApplication.Enum;
+using TodoApplication.Identity;
 using TodoApplication.Repository.Interfaces;
 using TodoApplication.Services.Interfaces;
 
@@ -9,23 +10,27 @@ namespace TodoApplication.Services;
 public class TodoService : ITodoService
 {
     private readonly ITodoRepository _todoRepository;
+    private readonly ISystemInfoFromCookie _cookieInfo;
 
-    public TodoService(ITodoRepository todoRepository)
+    public TodoService(
+        ITodoRepository todoRepository,
+        ISystemInfoFromCookie cookieInfo)
     {
         _todoRepository = todoRepository;
+        _cookieInfo = cookieInfo;
     }
     public async Task<Response> AddTodo(CreateTodoDto todoDto, CancellationToken ct)
     {
         var todo = new Todos
         {
+            user_id = _cookieInfo.user_id,
             title =  todoDto.title,
             description = todoDto.description,
             status = todo_status.Pending,
             priority = todoDto.priority,
             is_deleted = false,
             created_at = DateTime.UtcNow,
-            created_by = "suwas",
-            updated_by =  "suwas",
+            created_by = _cookieInfo.full_name,
             updated_at = DateTime.UtcNow,
             
         };
@@ -42,7 +47,12 @@ public class TodoService : ITodoService
 
     public async Task<List<Todos>> GetAllTodos(CancellationToken ct)
     {
-        return await _todoRepository.GetAllTodosAsync(ct);
+        if (_cookieInfo.IsSuperAdmin || _cookieInfo.IsManager)
+        {
+            return await _todoRepository.GetAllTodosAsync(ct);
+        }
+        return await _todoRepository.GetAllTodosByUser(_cookieInfo.user_id, ct);
+        
     }
 
     public async Task<Todos?> GetTodoById(int id, CancellationToken ct)

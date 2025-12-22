@@ -11,6 +11,8 @@ public interface ISystemInfoFromCookie
     List<string> roles { get; }
     bool IsInRole(string role);
     bool IsSuperAdmin { get; }
+    bool IsManager { get; }
+    bool IsUser { get; }
 }
 public sealed class SystemInfoFromCookie : ISystemInfoFromCookie
 {
@@ -36,4 +38,6 @@ public sealed class SystemInfoFromCookie : ISystemInfoFromCookie
 
     // 🚀 Role Shortcuts
     public bool IsSuperAdmin => IsInRole(Role.SuperAdmin);
+    public bool IsManager => IsInRole(Role.Manager);
+    public bool IsUser => IsInRole(Role.User);
 }

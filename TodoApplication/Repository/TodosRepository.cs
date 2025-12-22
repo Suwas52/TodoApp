@@ -45,4 +45,11 @@ public class TodosRepository : ITodoRepository
             .Where(t => !t.is_deleted)
             .ToListAsync(ct);
     }
+
+    public async Task<List<Todos>> GetAllTodosByUser(Guid userId, CancellationToken ct)
+    {
+        return await _context.Todos
+            .Where(t => t.user_id == userId && !t.is_deleted)
+            .ToListAsync(ct);
+    }
 }

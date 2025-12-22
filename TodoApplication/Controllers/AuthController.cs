@@ -29,12 +29,15 @@ public class AuthController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> LoginData(LoginDto dto, CancellationToken ct)
+    public async Task<IActionResult> Login(LoginDto dto, CancellationToken ct)
     {
         var principle = await _authService.LoginAsync(dto, ct);
         
         if(principle == null)
-            return Unauthorized("Invalid Credentials");
+        {
+            ModelState.AddModelError("", "Invalid Credentials");
+            return View(dto);
+        }
 
         await HttpContext.SignInAsync(
             "TodoApplication",
@@ -71,10 +74,7 @@ public class AuthController : Controller
         return RedirectToAction("Login");
     }
     
-    public IActionResult Profile()
-    {
-        return View();
-    }
+
     
     public IActionResult PasswordChange()
     {
@@ -99,6 +99,45 @@ public class AuthController : Controller
         }
 
         return RedirectToAction(nameof(PasswordChange));
+    }
+    
+    public async Task<IActionResult> Profile(CancellationToken ct)
+    {
+        var detail = await _authService.UserProfileDetail(ct);
+        return View(detail);
+    }
+    
+    public async Task<IActionResult> EditProfile(CancellationToken ct)
+    {
+        var detail = await _authService.UserProfileDetail(ct);
+        var dto = new UserUpdateDto
+        {
+            first_name = detail.first_name,
+            last_name = detail.last_name,
+            email = detail.email,
+            phone_number = detail.phone_number,
+            address = detail.address,
+            gender = detail.gender,
+        };
+        return View(dto);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditProfile(UserUpdateDto dto, CancellationToken ct)
+    {
+        if(!ModelState.IsValid)
+            return View("EditProfile",dto);
+           
+        var userId = _cookieInfo.user_id; 
+        var result = await _authService.UpdateUserAsync(userId, dto, ct);
+        if(!result.issucceed)
+        {
+            ModelState.AddModelError("", result.message);
+            return View(dto);
+        }
+        
+        return RedirectToAction(nameof(Profile));
     }
     
 

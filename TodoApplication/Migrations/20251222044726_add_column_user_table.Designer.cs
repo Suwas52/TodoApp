@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TodoApplication.Data;
@@ -11,9 +12,11 @@ using TodoApplication.Data;
 namespace TodoApplication.Migrations
 {
     [DbContext(typeof(TodoAppDbContext))]
-    partial class TodoAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251222044726_add_column_user_table")]
+    partial class add_column_user_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -99,12 +102,7 @@ namespace TodoApplication.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("character varying(255)");
 
-                    b.Property<Guid>("user_id")
-                        .HasColumnType("uuid");
-
                     b.HasKey("id");
-
-                    b.HasIndex("user_id");
 
                     b.ToTable("Todos");
                 });
@@ -209,17 +207,6 @@ namespace TodoApplication.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("TodoApplication.Entities.Todos", b =>
-                {
-                    b.HasOne("TodoApplication.Entities.Users", "createdTodoUser")
-                        .WithMany("todos")
-                        .HasForeignKey("user_id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("createdTodoUser");
-                });
-
             modelBuilder.Entity("TodoApplication.Entities.UserRoles", b =>
                 {
                     b.HasOne("TodoApplication.Entities.Roles", "Role")
@@ -246,8 +233,6 @@ namespace TodoApplication.Migrations
 
             modelBuilder.Entity("TodoApplication.Entities.Users", b =>
                 {
-                    b.Navigation("todos");
-
                     b.Navigation("userroles");
                 });
 #pragma warning restore 612, 618
