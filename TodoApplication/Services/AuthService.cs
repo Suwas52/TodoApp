@@ -46,18 +46,21 @@ public class AuthService : IAuthService
         _forgetPasswordMail = forgetPasswordMail;
         _codeRepository = codeRepository;
     }
-    
-   
-    public async Task<ClaimsPrincipal?> LoginAsync(LoginDto dto, CancellationToken ct)
-    {
-        var user = await _usersRepo.GetUserByEmailAsync(dto.Email, ct);
-        if (user == null) return null;
 
-        // if (!user.is_active)
-        //     return null;
+    public async Task<Users?> GetUserByEmail(string email, CancellationToken ct)
+    {
+        var user =  await _usersRepo.GetUserByEmailAsync(email, ct);
+        if (!user.is_active || !user.email_confirmed)
+            return null;
+        
+        return user;
+    }
+   
+    public async Task<ClaimsPrincipal?> LoginAsync(Users user,string password, CancellationToken ct)
+    {
 
         bool passwordMatch =
-            PasswordHasher.VerifyHashedPassword(user.password_hash, dto.Password);
+            PasswordHasher.VerifyHashedPassword(user.password_hash, password);
 
         if (!passwordMatch) return null;
 

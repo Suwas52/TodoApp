@@ -35,7 +35,19 @@ public class AuthController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Login(LoginDto dto, CancellationToken ct)
     {
-        var principle = await _authService.LoginAsync(dto, ct);
+        var user = await _authService.GetUserByEmail(dto.Email, ct);
+        if (user == null)
+        {
+            ModelState.AddModelError("", "User email is not verify first verify you account");
+            return View(dto);
+        }
+
+        if (user.is_blocked)
+        {
+            ModelState.AddModelError("", "You have blocked the user");
+            return View(dto);
+        }
+        var principle = await _authService.LoginAsync(user,dto.Password, ct);
 
         if (principle == null)
         {
