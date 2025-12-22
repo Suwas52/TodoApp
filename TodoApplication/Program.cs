@@ -2,7 +2,9 @@ using Hangfire;
 using Hangfire.Dashboard;
 using Hangfire.PostgreSql;
 using Microsoft.EntityFrameworkCore;
+using TodoApplication.BackGround_Job;
 using TodoApplication.Data;
+using TodoApplication.Email;
 using TodoApplication.Extension;
 using TodoApplication.Helper;
 using TodoApplication.Identity;
@@ -32,8 +34,13 @@ builder.Services.AddScoped<IUserSeeder, UserSeeder>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDashbordCardRepo, DashbordCardRepo>();
+builder.Services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>();
+
+
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISystemInfoFromCookie, SystemInfoFromCookie>();
+builder.Services.AddScoped<IEmailSender, SmtpEmailSender>();
+builder.Services.AddScoped<IForgetPasswordMail, ForgetPasswordMailCode>();
 
 builder.Services.AddHangfire(config =>
 {
@@ -46,7 +53,8 @@ builder.Services.AddHangfire(config =>
         );
 });
 
-
+builder.Services.Configure<EmailSettings>(
+    builder.Configuration.GetSection("EmailSettings"));
 
 builder.Services.AddAuthentication("TodoApplication")
     .AddCookie("TodoApplication", options =>

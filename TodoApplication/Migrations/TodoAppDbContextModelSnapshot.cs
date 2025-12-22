@@ -209,6 +209,40 @@ namespace TodoApplication.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("TodoApplication.Entities.VerificationCode", b =>
+                {
+                    b.Property<Guid>("code_id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasDefaultValueSql("gen_random_uuid()");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("attempt_count")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<byte[]>("codehash")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("bytea");
+
+                    b.Property<DateTime>("expires_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("used_at")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("user_id")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("code_id");
+
+                    b.ToTable("VerificationCodes");
+                });
+
             modelBuilder.Entity("TodoApplication.Entities.Todos", b =>
                 {
                     b.HasOne("TodoApplication.Entities.Users", "createdTodoUser")

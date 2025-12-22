@@ -146,10 +146,51 @@ public class AuthController : Controller
         
         return RedirectToAction(nameof(Profile));
     }
+
+    public IActionResult ForgotPassword()
+    {
+        return View();
+    }
     
-    
-    
+    public IActionResult ResetPassword()
+    {
+        return View();
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordDto dto, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+            return View(dto);
+
+        var result = await _authService.ResetPassword(dto, ct);
+        if (!result.issucceed)
+        {
+            ModelState.AddModelError("", result.message);
+            return View(dto);
+        }
+
+        TempData["SuccessMessage"] = "Password reset successfully.";
+        return RedirectToAction(nameof(Login));
+    }
     
 
-   
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgotPassword(ForgetPassword dto, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+            return View(dto);
+
+        var result = await _authService.RequestPasswordResetAsync(dto.Email, ct);
+        if (!result.issucceed)
+        {
+            ModelState.AddModelError("", result.message);
+            return View(dto);
+        }
+
+        TempData["SuccessMessage"] = "If an account exists for that email, we have sent a reset link.";
+        return RedirectToAction(nameof(ResetPassword));
+    }
+
 }

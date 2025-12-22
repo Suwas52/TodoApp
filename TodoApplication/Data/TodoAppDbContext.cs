@@ -14,6 +14,7 @@ public class TodoAppDbContext : DbContext
     public DbSet<Users>  Users { get; set; }
     public DbSet<Roles>  Roles { get; set; }
     public DbSet<UserRoles>  UserRoles { get; set; }
+    public DbSet<VerificationCode>  VerificationCodes { get; set; }
     
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

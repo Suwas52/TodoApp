@@ -216,3 +216,6 @@
 /Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/tr-TR/Hangfire.Core.resources.dll
 /Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/zh-TW/Hangfire.Core.resources.dll
 /Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/zh/Hangfire.Core.resources.dll
+/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/BouncyCastle.Cryptography.dll
+/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/MailKit.dll
+/Users/subashdanuwar/Development/Game Development class/TodoApp/TodoApplication/TodoApplication/bin/Debug/net9.0/MimeKit.dll

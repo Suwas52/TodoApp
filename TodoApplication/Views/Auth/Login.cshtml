@@ -1,54 +1,127 @@
+@* @model TodoApplication.Dto.LoginDto; *@
+@* @{ *@
+@*     Layout = "_LoginLayout"; *@
+@*     ViewBag.Title = "Log In"; *@
+@* } *@
+@* *@
+@* <div class="text-center mt-4"> *@
+@*     <h1 class="h2">Sign In</h1> *@
+@* </div> *@
+@* *@
+@* <div class="card"> *@
+@*     <div class="card-body"> *@
+@*         <div class="m-sm-3"> *@
+@*             <form id="account" method="post" > *@
+@*                 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div> *@
+@* *@
+@*                 <div class="mb-3"> *@
+@*                     $1$ <label asp-for="Email" class="form-label">Email</label> #1# *@
+@*                     <input type="text" asp-for="Email" class="form-control form-control-lg" aria-required="true" placeholder="Enter your Email" /> *@
+@*                 </div> *@
+@*                 <div class="mb-3 position-relative"> *@
+@*                     <input asp-for="Password" *@
+@*                            type="password" *@
+@*                            id="passwordInput" *@
+@*                            class="form-control form-control-lg pe-5" *@
+@*                            placeholder="Enter your password" /> *@
+@* *@
+@*                     <button type="button" *@
+@*                             class="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2" *@
+@*                             onclick="togglePassword()"> *@
+@*                         <i id="eyeIcon" class="bi bi-eye"></i> *@
+@*                     </button> *@
+@*                 </div> *@
+@* *@
+@*                 $1$ <div> #1# *@
+@*                 $1$     <div class="form-check align-items-center"> #1# *@
+@*                 $1$         <input id="customControlInline" type="checkbox" class="form-check-input" value="remember-me" name="RememberMe" checked> #1# *@
+@*                 $1$         <label class="form-check-label text-small" for="customControlInline">Remember me</label> #1# *@
+@*                 $1$     </div> #1# *@
+@*                 $1$ </div> #1# *@
+@*                 <div class="d-grid gap-2 mt-3"> *@
+@*                     <button id="login-submit" type="submit" class="btn btn-lg btn-primary">Sign in</button> *@
+@*                     <a asp-controller="Auth" *@
+@*                        asp-action="Register" *@
+@*                        class="btn btn-lg btn-outline-secondary"> *@
+@*                         Create new account *@
+@*                     </a> *@
+@*                 </div> *@
+@* *@
+@*             </form> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+@* *@
+@* <script> *@
+@*     function togglePassword() { *@
+@*         const input = document.getElementById("passwordInput"); *@
+@*         const icon = document.getElementById("eyeIcon"); *@
+@* *@
+@*         if (input.type === "password") { *@
+@*             input.type = "text"; *@
+@*             icon.classList.remove("bi-eye"); *@
+@*             icon.classList.add("bi-eye-slash"); *@
+@*         } else { *@
+@*             input.type = "password"; *@
+@*             icon.classList.remove("bi-eye-slash"); *@
+@*             icon.classList.add("bi-eye"); *@
+@*         } *@
+@*     } *@
+@* </script> *@
+
 @model TodoApplication.Dto.LoginDto;
 @{
     Layout = "_LoginLayout";
     ViewBag.Title = "Log In";
 }
 
-<div class="text-center mt-4">
-    <h1 class="h2">Sign In</h1>
+<style>
+    .login-card { border: none; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+    .btn-primary-custom { background: #4f46e5; border: none; padding: 12px; border-radius: 12px; font-weight: 600; transition: all 0.3s; }
+    .btn-primary-custom:hover { background: #4338ca; transform: translateY(-1px); }
+    .form-control-lg { border-radius: 12px; font-size: 0.95rem; border: 2px solid #f1f5f9; background: #f8fafc; }
+    .form-control-lg:focus { background: #fff; border-color: #4f46e5; box-shadow: none; }
+</style>
+
+<div class="text-center mt-4 mb-4">
+    <h1 class="fw-bold text-dark">Welcome Back</h1>
+    <p class="text-muted">Please enter your account to sign in</p>
 </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="m-sm-3">
-            <form id="account" method="post" >
-                <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+<div class="card login-card">
+    <div class="card-body p-4 p-md-5">
+        <form id="account" method="post">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger border-0 small" role="alert"></div>
 
-                <div class="mb-3">
-                    @* <label asp-for="Email" class="form-label">Email</label> *@
-                    <input type="text" asp-for="Email" class="form-control form-control-lg" aria-required="true" placeholder="Enter your Email" />
+            <div class="mb-4">
+                <label class="form-label fw-bold small text-uppercase text-muted">Email Address</label>
+                <input type="email" asp-for="Email" class="form-control form-control-lg" placeholder="name@company.com" />
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between">
+                    <label class="form-label fw-bold small text-uppercase text-muted">Password</label>
+                    @* Forgot Password Link *@
+                    <a asp-action="ForgotPassword" class="text-decoration-none small fw-bold" style="color: #4f46e5;">Forgot password?</a>
                 </div>
-                <div class="mb-3 position-relative">
-                    <input asp-for="Password"
-                           type="password"
-                           id="passwordInput"
-                           class="form-control form-control-lg pe-5"
-                           placeholder="Enter your password" />
-
-                    <button type="button"
-                            class="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2"
-                            onclick="togglePassword()">
+                <div class="position-relative">
+                    <input asp-for="Password" type="password" id="passwordInput" class="form-control form-control-lg pe-5" placeholder="••••••••" />
+                    <button type="button" class="btn btn-link position-absolute top-50 end-0 translate-middle-y me-2 text-muted text-decoration-none" onclick="togglePassword()">
                         <i id="eyeIcon" class="bi bi-eye"></i>
                     </button>
                 </div>
+                <span asp-validation-for="Password" class="text-danger small"></span>
+            </div>
 
-                @* <div> *@
-                @*     <div class="form-check align-items-center"> *@
-                @*         <input id="customControlInline" type="checkbox" class="form-check-input" value="remember-me" name="RememberMe" checked> *@
-                @*         <label class="form-check-label text-small" for="customControlInline">Remember me</label> *@
-                @*     </div> *@
-                @* </div> *@
-                <div class="d-grid gap-2 mt-3">
-                    <button id="login-submit" type="submit" class="btn btn-lg btn-primary">Sign in</button>
-                    <a asp-controller="Auth"
-                       asp-action="Register"
-                       class="btn btn-lg btn-outline-secondary">
-                        Create new account
-                    </a>
+            <div class="d-grid gap-2 mt-4">
+                <button id="login-submit" type="submit" class="btn btn-primary-custom text-white">Sign in</button>
+                <div class="text-center mt-3">
+                    <span class="text-muted small">Don't have an account?</span>
+                    <a asp-controller="Auth" asp-action="Register" class="text-decoration-none small fw-bold" style="color: #4f46e5;"> Create one</a>
                 </div>
-
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -56,15 +129,8 @@
     function togglePassword() {
         const input = document.getElementById("passwordInput");
         const icon = document.getElementById("eyeIcon");
-
-        if (input.type === "password") {
-            input.type = "text";
-            icon.classList.remove("bi-eye");
-            icon.classList.add("bi-eye-slash");
-        } else {
-            input.type = "password";
-            icon.classList.remove("bi-eye-slash");
-            icon.classList.add("bi-eye");
-        }
+        input.type = input.type === "password" ? "text" : "password";
+        icon.classList.toggle("bi-eye");
+        icon.classList.toggle("bi-eye-slash");
     }
 </script>
