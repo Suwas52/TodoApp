@@ -6,7 +6,7 @@ namespace TodoApplication.Services.Interfaces;
 
 public interface IUserService
 {
-    Task<Response> RegisterUser(UserCreateDto dto, CancellationToken ct);
+   
     //Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct);
     Task<Response> UserDeleteAsync(Guid id,  CancellationToken ct);
     Task<Response> BlockUnBlockUser(Guid id, CancellationToken ct);

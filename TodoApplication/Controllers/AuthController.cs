@@ -15,6 +15,7 @@ public class AuthController : Controller
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
     private readonly ISystemInfoFromCookie _cookieInfo;
+
     public AuthController(
         IAuthService authService,
         IUserService userService,
@@ -24,6 +25,7 @@ public class AuthController : Controller
         _userService = userService;
         _cookieInfo = cookieInfo;
     }
+
     public IActionResult Login()
     {
         return View();
@@ -34,8 +36,8 @@ public class AuthController : Controller
     public async Task<IActionResult> Login(LoginDto dto, CancellationToken ct)
     {
         var principle = await _authService.LoginAsync(dto, ct);
-        
-        if(principle == null)
+
+        if (principle == null)
         {
             ModelState.AddModelError("", "Invalid Credentials");
             return View(dto);
@@ -44,7 +46,7 @@ public class AuthController : Controller
         await HttpContext.SignInAsync(
             "TodoApplication",
             principle);
-        
+
         return RedirectToAction("Index", "Home");
     }
 
@@ -58,17 +60,19 @@ public class AuthController : Controller
     public async Task<IActionResult> Register(UserCreateDto dto, CancellationToken ct)
     {
         if (!ModelState.IsValid)
-            return View("Register",dto);
-        var result = await  _userService.RegisterUser(dto, ct);
+            return View("Register", dto);
+
+        var result = await _authService.RegisterUser(dto, ct);
         if (!result.issucceed)
         {
             ModelState.AddModelError("", result.message);
             return View(dto);
         }
 
-        return RedirectToAction(nameof(Login));
+        // PASS THE EMAIL HERE
+        return RedirectToAction(nameof(ConfirmEmail), new { email = dto.email });
     }
-    
+
 
     [Authorize]
     public async Task<IActionResult> Logout()
@@ -76,26 +80,26 @@ public class AuthController : Controller
         await HttpContext.SignOutAsync("TodoApplication");
         return RedirectToAction("Login");
     }
-    
+
 
     [Authorize]
     public IActionResult PasswordChange()
     {
         var dto = new ChangePasswordDto
         {
-            user_id =  _cookieInfo.user_id
+            user_id = _cookieInfo.user_id
         };
         return View(dto);
     }
-    
+
     [Authorize]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> PasswordChange(ChangePasswordDto dto, CancellationToken ct)
     {
         if (!ModelState.IsValid)
-            return View("PasswordChange",dto);
-        var result = await  _userService.ChangePassword(dto.user_id, dto, ct);
+            return View("PasswordChange", dto);
+        var result = await _userService.ChangePassword(dto.user_id, dto, ct);
         if (!result.issucceed)
         {
             ModelState.AddModelError("", result.message);
@@ -104,14 +108,14 @@ public class AuthController : Controller
 
         return RedirectToAction(nameof(PasswordChange));
     }
-    
+
     [Authorize]
     public async Task<IActionResult> Profile(CancellationToken ct)
     {
         var detail = await _authService.UserProfileDetail(ct);
         return View(detail);
     }
-    
+
     [Authorize]
     public async Task<IActionResult> EditProfile(CancellationToken ct)
     {
@@ -133,17 +137,17 @@ public class AuthController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> EditProfile(UserUpdateDto dto, CancellationToken ct)
     {
-        if(!ModelState.IsValid)
-            return View("EditProfile",dto);
-           
-        var userId = _cookieInfo.user_id; 
+        if (!ModelState.IsValid)
+            return View("EditProfile", dto);
+
+        var userId = _cookieInfo.user_id;
         var result = await _authService.UpdateUserAsync(userId, dto, ct);
-        if(!result.issucceed)
+        if (!result.issucceed)
         {
             ModelState.AddModelError("", result.message);
             return View(dto);
         }
-        
+
         return RedirectToAction(nameof(Profile));
     }
 
@@ -151,11 +155,23 @@ public class AuthController : Controller
     {
         return View();
     }
-    
+
     public IActionResult ResetPassword()
     {
         return View();
     }
+
+    [HttpGet]
+    public IActionResult ConfirmEmail(string email)
+    {
+        var model = new ConfirmEmailDto
+        {
+            Email = email
+        };
+    
+        return View(model);
+    }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> ResetPassword(ResetPasswordDto dto, CancellationToken ct)
@@ -174,6 +190,26 @@ public class AuthController : Controller
         return RedirectToAction(nameof(Login));
     }
     
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto dto, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+            return View(dto);
+
+        var result = await _authService.VerifyEmail(dto, ct);
+        if (!result.issucceed)
+        {
+            ModelState.AddModelError("", result.message);
+            return View(dto);
+        }
+
+        TempData["SuccessMessage"] = "If an account exists for that email, we have sent a reset link.";
+        return RedirectToAction(nameof(Login));
+    }
+    
+        
 
     [HttpPost]
     [ValidateAntiForgeryToken]

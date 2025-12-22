@@ -3,7 +3,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using TodoApplication.BackGround_Job;
-//using Microsoft.AspNetCore.Authentication.
 using TodoApplication.Dto;
 using TodoApplication.Dto.User;
 using TodoApplication.Entities;
@@ -20,13 +19,18 @@ public class AuthService : IAuthService
     
     private readonly IUnitOfWork _uow;
     private readonly IUsersRepository _usersRepo;
+    private readonly IRolesRepository _rolesRepository;
+    private readonly IUserRolesRepository _userRolesRepository;
     private readonly ISystemInfoFromCookie _cookieInfo;
     private readonly IDashbordCardRepo _dashboard;
     private readonly IForgetPasswordMail _forgetPasswordMail;
     private readonly IVerificationCodeRepository _codeRepository;
+    
     public AuthService(
         IUnitOfWork uow,
         IUsersRepository usersRepo,
+        IRolesRepository rolesRepository,
+        IUserRolesRepository userRolesRepository,
         ISystemInfoFromCookie cookieInfo,
         IDashbordCardRepo dashboard,
         IForgetPasswordMail forgetPasswordMail,
@@ -35,16 +39,22 @@ public class AuthService : IAuthService
     {
         _uow = uow;
         _usersRepo = usersRepo;
+        _rolesRepository = rolesRepository;
+        _userRolesRepository = userRolesRepository;
         _cookieInfo = cookieInfo;
         _dashboard = dashboard;
         _forgetPasswordMail = forgetPasswordMail;
         _codeRepository = codeRepository;
     }
+    
    
     public async Task<ClaimsPrincipal?> LoginAsync(LoginDto dto, CancellationToken ct)
     {
         var user = await _usersRepo.GetUserByEmailAsync(dto.Email, ct);
         if (user == null) return null;
+
+        // if (!user.is_active)
+        //     return null;
 
         bool passwordMatch =
             PasswordHasher.VerifyHashedPassword(user.password_hash, dto.Password);
@@ -71,6 +81,71 @@ public class AuthService : IAuthService
         await _uow.SaveChangesAsync(ct);
 
         return new ClaimsPrincipal(identity);
+    }
+    
+    public async Task<Response> RegisterUser(UserCreateDto dto, CancellationToken ct)
+    {
+        await _uow.BeginTransactionAsync(ct);
+        try
+        {
+            var emailUserExist = await _usersRepo.EmailExistsAsync(dto.email, ct);
+
+            if (emailUserExist)
+            {
+                await _uow.RollbackTransactionAsync(ct);
+                return new Response
+                {
+                    issucceed = false,
+                    statusCode = 404,
+                    message = "Email is already in use.",
+                };
+            }
+                
+
+            var user = new Users
+            {
+                first_name = dto.first_name,
+                last_name = dto.last_name,
+                email = dto.email,
+                password_hash = PasswordHasher.HashPassword(dto.password),
+                created_at = DateTime.UtcNow,
+                is_active = true
+            };
+
+            await _usersRepo.AddUserAsync(user, ct);
+
+            var role = await _rolesRepository.GetRoleByNameAsync("User", ct);
+
+            var userRole = new UserRoles
+            {
+                user_id = user.user_id,
+                role_id = role.role_id
+            };
+
+            await _userRolesRepository.AddUserRolesAsync(userRole, ct);
+            await ConfirmEmailSendCode(
+                user,
+                ct);
+            await _uow.CommitTransactionAsync(ct);
+
+            return new Response()
+            {
+                issucceed = true,
+                statusCode = 200,
+                message = "User Register successfully.",
+            };
+        }
+        catch (Exception e)
+        {
+            await _uow.RollbackTransactionAsync(ct);
+            return new Response()
+            {
+                issucceed = false,
+                statusCode = 500,
+                message = e.Message,
+            };
+        }
+
     }
 
     public async Task<UserDetailDto?> UserProfileDetail(CancellationToken ct)
@@ -119,6 +194,97 @@ public class AuthService : IAuthService
             return await _dashboard.AdminDashboardCard(ct);
         }
         return await _dashboard.UserDashboardCard(_cookieInfo.user_id,ct);
+    }
+
+    private async Task ConfirmEmailSendCode(Users user, CancellationToken ct)
+    {
+        var otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
+        var codeHash = SHA256.HashData(Encoding.UTF8.GetBytes(otp));
+
+        var verificationCode = new VerificationCode
+        {
+            user_id =  user.user_id,
+            codehash = codeHash,
+            expires_at = DateTime.UtcNow.AddMinutes(10)
+        };
+        await _codeRepository.AddAsync(verificationCode, ct);
+
+        var dto = new ConfirmEmailMailDto
+        {
+            Email = user.email,
+            Name = user.first_name + " " + user.last_name,
+            OtpCode = otp
+        };
+
+        await _forgetPasswordMail.SendConfirmationCodeAsync( dto, ct);
+    }
+    
+     public async Task<Response> VerifyEmail(ConfirmEmailDto dto, CancellationToken ct)
+    {
+        await _uow.BeginTransactionAsync(ct);
+        try
+        {
+                
+            var codeHash = SHA256.HashData(Encoding.UTF8.GetBytes(dto.VerificationCode));
+            
+            var verification = await _codeRepository.GetValidCodeAsync(codeHash);
+
+            if (verification == null)
+            {
+                await _uow.RollbackTransactionAsync(ct);
+                return new Response
+                {
+                    issucceed = false,
+                    statusCode = 400,
+                    message = "Invalid or expired code.",
+                };
+            }
+
+
+            if (verification.attempt_count >= MaxAttempts)
+            {
+                await _uow.RollbackTransactionAsync(ct);
+                return new Response
+                {
+                    issucceed = false,
+                    statusCode = 400,
+                    message = "Too many attempts.",
+                };
+            }
+    
+            var user = await _usersRepo.GetUserByIdAsync(verification.user_id, ct);
+            if (user == null)
+            {
+                await _uow.RollbackTransactionAsync(ct);
+                return new Response
+                {
+                    issucceed = false,
+                    statusCode = 400,
+                    message = "User not found.",
+                };
+            }
+    
+            user.is_active = true;
+            user.email_confirmed = true;
+            user.updated_at = DateTime.UtcNow;
+            await _uow.CommitTransactionAsync(ct);
+            return new Response
+            {
+                issucceed = true,
+                statusCode = 200,
+                message = "Email Confirm successful",
+            };
+        }
+        catch (Exception ex)
+        {
+            _uow.RollbackTransactionAsync(ct);
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 500,
+                message = ex.Message,
+            };
+        }
     }
     
     public async Task<Response> RequestPasswordResetAsync(string email, CancellationToken ct)

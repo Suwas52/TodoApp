@@ -1,0 +1,128 @@
+
+
+@model TodoApplication.Dto.User.ConfirmEmailDto
+@{
+    Layout = "_LoginLayout";
+    ViewBag.Title = "Verify Your Account";
+}
+
+<style>
+
+    .auth-card {
+        border: none;
+        border-radius: 1.5rem;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        background: #ffffff;
+    }
+    .icon-wrapper {
+        width: 72px;
+        height: 72px;
+        background-color: #f0f7ff;
+        color: #3b82f6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 1.25rem;
+        margin: 0 auto 1.5rem;
+        font-size: 2rem;
+    }
+
+    /* OTP Input Styling */
+    .otp-field {
+        letter-spacing: 0.75rem;
+        font-size: 1.75rem !important;
+        font-weight: 700;
+        text-align: center;
+        border: 2px solid #e2e8f0;
+        background-color: #f8fafc;
+        border-radius: 1rem;
+        padding: 0.75rem;
+        transition: all 0.2s ease;
+        color: #1e293b;
+    }
+
+    .otp-field:focus {
+        border-color: #3b82f6;
+        background-color: #fff;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+        outline: none;
+    }
+
+    /* Button Styling */
+    .btn-verify {
+        background-color: #1e293b;
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        border-radius: 0.75rem;
+        font-weight: 600;
+        transition: transform 0.2s;
+    }
+
+    .btn-verify:hover {
+        background-color: #0f172a;
+        transform: translateY(-1px);
+        color: white;
+    }
+
+    .resend-link {
+        color: #3b82f6;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.875rem;
+    }
+
+    .resend-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="card auth-card mt-3">
+    <div class="card-body p-4 p-md-5">
+        <div class="text-center">
+            <div class="icon-wrapper">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            
+            <h3 class="fw-bold text-dark mb-2">Check your email</h3>
+            <p class="text-muted mb-4 px-lg-4">
+                We've sent a 6-digit verification code to <br/>
+                <span class="text-dark fw-semibold">@(Model?.Email ?? "your inbox")</span>
+            </p>
+        </div>
+
+        <form asp-action="ConfirmEmail" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Email" />
+
+            <div asp-validation-summary="ModelOnly" class="text-danger small mb-3 text-center"></div>
+
+            <div class="mb-4">
+                <input asp-for="VerificationCode" 
+                       class="form-control otp-field" 
+                       placeholder="000000" 
+                       maxlength="6" 
+                       autocomplete="one-time-code" 
+                       required />
+                <span asp-validation-for="VerificationCode" class="text-danger small d-block text-center mt-2"></span>
+            </div>
+
+            <div class="d-grid gap-3">
+                <button type="submit" class="btn btn-verify">
+                    Verify Account
+                </button>
+                
+                <div class="text-center">
+                    <p class="text-muted small mb-0">Didn't receive the email?</p>
+                    <a href="#" class="resend-link">Click to resend code</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="text-center mt-4">
+    <a asp-action="Login" class="text-muted text-decoration-none small fw-medium">
+        <i class="bi bi-arrow-left me-1"></i> Back to Login
+    </a>
+</div>

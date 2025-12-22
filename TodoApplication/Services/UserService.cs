@@ -26,47 +26,7 @@ public class UserService : IUserService
         _userRolesRepository = userRolesRepository;
         _uow = uow;
     }
-    public async Task<Response> RegisterUser(UserCreateDto dto, CancellationToken ct)
-    {
-        var emailUserExist = await _usersRepository.EmailExistsAsync(dto.email, ct);
-        
-        if (emailUserExist)
-            return new Response
-            {
-                issucceed = false,
-                statusCode = 404,
-                message = "Email is already in use.",
-            };
-        
-        var user = new Users
-        {
-            first_name =  dto.first_name,
-            last_name =  dto.last_name,
-            email =  dto.email,
-            password_hash = PasswordHasher.HashPassword(dto.password),
-            created_at = DateTime.UtcNow,
-            is_active =  true
-        };
-        
-        await _usersRepository.AddUserAsync(user, ct);
-        
-        var role = await _rolesRepository.GetRoleByNameAsync("User", ct);
-
-        var userRole = new UserRoles
-        {
-            user_id = user.user_id,
-            role_id = role.role_id
-        };
-
-        await _userRolesRepository.AddUserRolesAsync(userRole, ct);
-        return new Response()
-        {
-            issucceed = true,
-            statusCode = 200,
-            message = "User Register successfully.",
-        };
-
-    }
+    
 
     public async Task<Response> AdminUpdateUserAsync(Guid id, AdminUpdateUserDto dto, CancellationToken ct)
     {
