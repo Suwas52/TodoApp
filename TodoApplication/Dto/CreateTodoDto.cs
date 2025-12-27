@@ -7,4 +7,5 @@ public class CreateTodoDto
     public string title { get; set; }
     public string description  { get; set; }
     public todo_priority priority { get; set; }
+    public DateTime due_date { get; set; }
 }

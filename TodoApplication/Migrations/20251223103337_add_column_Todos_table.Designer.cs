@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TodoApplication.Data;
@@ -11,9 +12,11 @@ using TodoApplication.Data;
 namespace TodoApplication.Migrations
 {
     [DbContext(typeof(TodoAppDbContext))]
-    partial class TodoAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251223103337_add_column_Todos_table")]
+    partial class add_column_Todos_table
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,7 +33,7 @@ namespace TodoApplication.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("created_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("is_deleted")
                         .ValueGeneratedOnAdd()
@@ -43,7 +46,7 @@ namespace TodoApplication.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime?>("updated_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("role_id");
 
@@ -62,7 +65,7 @@ namespace TodoApplication.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("id"));
 
                     b.Property<DateTime>("created_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("created_by")
                         .IsRequired()
@@ -73,7 +76,7 @@ namespace TodoApplication.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTime>("due_date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("is_deleted")
                         .ValueGeneratedOnAdd()
@@ -96,7 +99,7 @@ namespace TodoApplication.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("updated_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("updated_by")
                         .HasMaxLength(255)
@@ -139,7 +142,7 @@ namespace TodoApplication.Migrations
                         .HasColumnType("character varying(255)");
 
                     b.Property<DateTime>("created_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("email")
                         .IsRequired()
@@ -161,6 +164,11 @@ namespace TodoApplication.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
 
+                    b.Property<bool>("is_active")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
                     b.Property<bool>("is_blocked")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -172,7 +180,7 @@ namespace TodoApplication.Migrations
                         .HasDefaultValue(false);
 
                     b.Property<DateTime?>("last_login_date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("last_name")
                         .IsRequired()
@@ -185,7 +193,7 @@ namespace TodoApplication.Migrations
                         .HasDefaultValue(0);
 
                     b.Property<DateTime?>("password_change_date")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("password_hash")
                         .IsRequired()
@@ -197,9 +205,12 @@ namespace TodoApplication.Migrations
                         .HasColumnType("character varying(15)");
 
                     b.Property<DateTime?>("updated_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("user_id");
+
+                    b.HasIndex("email")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -212,7 +223,7 @@ namespace TodoApplication.Migrations
                         .HasDefaultValueSql("gen_random_uuid()");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("attempt_count")
                         .ValueGeneratedOnAdd()
@@ -225,10 +236,10 @@ namespace TodoApplication.Migrations
                         .HasColumnType("bytea");
 
                     b.Property<DateTime>("expires_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("used_at")
-                        .HasColumnType("timestamp without time zone");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("user_id")
                         .HasColumnType("uuid");

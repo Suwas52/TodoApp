@@ -14,15 +14,18 @@ public class AuthController : Controller
 
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
+    private readonly IVerificationService _verificationService;
     private readonly ISystemInfoFromCookie _cookieInfo;
 
     public AuthController(
         IAuthService authService,
         IUserService userService,
+        IVerificationService verificationService,
         ISystemInfoFromCookie cookieInfo)
     {
         _authService = authService;
         _userService = userService;
+        _verificationService = verificationService;
         _cookieInfo = cookieInfo;
     }
 
@@ -210,7 +213,7 @@ public class AuthController : Controller
         if (!ModelState.IsValid)
             return View(dto);
 
-        var result = await _authService.VerifyEmail(dto, ct);
+        var result = await _verificationService.VerifyEmail(dto, ct);
         if (!result.issucceed)
         {
             ModelState.AddModelError("", result.message);

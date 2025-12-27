@@ -31,10 +31,11 @@ public class TodoService : ITodoService
             description = todoDto.description,
             status = todo_status.Pending,
             priority = todoDto.priority,
+            due_date = todoDto.due_date,
             is_deleted = false,
-            created_at = DateTime.UtcNow,
+            created_at = DateTime.Now,
             created_by = _cookieInfo.full_name,
-            updated_at = DateTime.UtcNow,
+            updated_at = DateTime.Now,
             
         };
 
@@ -84,7 +85,7 @@ public class TodoService : ITodoService
         }
 
         todo.status = todo_status.Completed; 
-        todo.updated_at = DateTime.UtcNow;
+        todo.updated_at = DateTime.Now;
 
         await _uow.SaveChangesAsync(ct);
     
@@ -107,11 +108,13 @@ public class TodoService : ITodoService
                 statusCode = 404,
                 message = "Todo not found"
             };
+        
 
         todo.title = dto.title;
         todo.description = dto.description;
         todo.priority = dto.priority;
-        todo.updated_at = DateTime.UtcNow;
+        todo.due_date = dto.due_date;
+        todo.updated_at = DateTime.Now;
         todo.updated_by = "suwas";
 
         await _todoRepository.UpdateTodoAsync(todo, ct);
@@ -135,7 +138,7 @@ public class TodoService : ITodoService
             };
         
         todo.is_deleted = true;
-        todo.updated_at = DateTime.UtcNow;
+        todo.updated_at = DateTime.Now;
         
         await _todoRepository.UpdateTodoAsync(todo, ct);
         return new Response()

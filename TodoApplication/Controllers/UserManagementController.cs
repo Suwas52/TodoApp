@@ -108,9 +108,9 @@ public class UserManagementController : Controller
     }
     
     [HttpPost] 
-    public async Task<IActionResult> ActiveInactiveUser(Guid id, CancellationToken ct)
+    public async Task<IActionResult> ResentEmailConfirmOTP(Guid id, CancellationToken ct)
     {
-        var result = await _userService.UserActivateInactive(id, ct);
+        var result = await _userService.ResetSendConfirmEmailOTP(id, ct);
         
         return RedirectToAction(nameof(UserDetails), new { id = id });
     }

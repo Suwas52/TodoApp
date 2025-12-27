@@ -15,6 +15,7 @@ public sealed class TodosConfiguration : IEntityTypeConfiguration<Todos>
         builder.Property(t => t.description).IsRequired(false);
         builder.Property(t => t.status).HasDefaultValue(todo_status.Pending).IsRequired();
         builder.Property(t => t.priority).HasDefaultValue(todo_priority.Low).IsRequired();
+        builder.Property(t => t.due_date).IsRequired();
         builder.Property(t => t.is_deleted).HasDefaultValue(false).IsRequired();
         builder.Property(t => t.created_at).IsRequired();
         builder.Property(t => t.created_by).HasMaxLength(255).IsRequired();

@@ -13,17 +13,20 @@ public class UserService : IUserService
     private readonly IUsersRepository _usersRepository;
     private readonly IRolesRepository _rolesRepository;
     private readonly IUserRolesRepository _userRolesRepository;
+    private readonly IVerificationService _verificationService;
     private readonly IUnitOfWork _uow;
     public UserService(
         IUsersRepository usersRepository, 
         IRolesRepository rolesRepository, 
         IUserRolesRepository userRolesRepository,
+        IVerificationService verificationService,
         IUnitOfWork uow
         )
     {
         _usersRepository = usersRepository;
         _rolesRepository = rolesRepository;
         _userRolesRepository = userRolesRepository;
+        _verificationService = verificationService;
         _uow = uow;
     }
     
@@ -54,6 +57,7 @@ public class UserService : IUserService
             user.first_name = dto.first_name;
             user.last_name = dto.last_name;
             user.email = dto.email;
+            user.updated_at = DateTime.Now;
             
             await RolesAddOrRemove(user,dto.roles, ct);
             await _uow.CommitTransactionAsync(ct);
@@ -127,7 +131,7 @@ public class UserService : IUserService
         
         var newHashPassword = PasswordHasher.HashPassword(dto.new_password);
         user.password_hash = newHashPassword;
-        user.password_change_date = DateTime.UtcNow;
+        user.password_change_date = DateTime.Now;
         await _uow.SaveChangesAsync(ct);
         return new Response
         {
@@ -171,7 +175,7 @@ public class UserService : IUserService
                 };
 
         user.is_blocked = !user.is_blocked; 
-        user.updated_at = DateTime.UtcNow;
+        user.updated_at = DateTime.Now;
 
         await _uow.SaveChangesAsync(ct);
     
@@ -185,29 +189,28 @@ public class UserService : IUserService
     }
 
 
-    public async Task<Response> UserActivateInactive(Guid id, CancellationToken ct)
-    {
-        var user = await _usersRepository.GetUserByIdAsync(id, ct);
-        if (user == null)
-            return new Response()
-            {
-                issucceed = false, 
-                statusCode = 404, 
-                message = "User not found."
-            };
-        
-        user.is_active = !user.is_active; 
-        user.updated_at = DateTime.UtcNow;
-
-        await _uow.SaveChangesAsync(ct);
-    
-        return new Response()
-        {
-            issucceed = true,
-            statusCode = 200,
-            message = user.is_active ? "User Active successfully" : "User Inactive successfully",
-        };
-    }
+    // public async Task<Response> UserActivateInactive(Guid id, CancellationToken ct)
+    // {
+    //     var user = await _usersRepository.GetUserByIdAsync(id, ct);
+    //     if (user == null)
+    //         return new Response()
+    //         {
+    //             issucceed = false, 
+    //             statusCode = 404, 
+    //             message = "User not found."
+    //         };
+    //     
+    //     user.updated_at = DateTime.Now;
+    //
+    //     await _uow.SaveChangesAsync(ct);
+    //
+    //     return new Response()
+    //     {
+    //         issucceed = true,
+    //         statusCode = 200,
+    //         message = user.is_active ? "User Active successfully" : "User Inactive successfully",
+    //     };
+    // }
 
     public async Task<List<UserListDto>> GetAllUsersAsync(CancellationToken ct)
     {
@@ -249,11 +252,11 @@ public class UserService : IUserService
                 first_name = dto.first_name,
                 last_name = dto.last_name,
                 email = dto.email,
-                is_active = true,
                 is_deleted = false,
                 password_hash = hashPassword
             };
             await _usersRepository.AddUserAsync(user, ct);
+            
             bool rolesExist = await _rolesRepository.RolesExistsAsync(dto.roles, ct);
             if (!rolesExist)
             {
@@ -271,6 +274,8 @@ public class UserService : IUserService
                 await _uow.RollbackTransactionAsync(ct);
                 return roleResult;
             }
+
+            await _verificationService.SendConfirmEmailOTP(user, ct);
             
             await _uow.CommitTransactionAsync(ct);
 
@@ -294,5 +299,34 @@ public class UserService : IUserService
                 message = ex.Message,
             };
         }
+    }
+
+    public async Task<Response> ResetSendConfirmEmailOTP(Guid user_id, CancellationToken ct)
+    {
+        var user = await _usersRepository.GetUserByIdAsync(user_id, ct);
+        if (user == null)
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 409,
+                message = "User not found",
+            };
+
+        if (user.email_confirmed == true)
+            return new Response
+            {
+                issucceed = false,
+                statusCode = 409,
+                message = "Email is already Confirmed",
+            };
+        
+        await _verificationService.SendConfirmEmailOTP(user, ct);
+
+        return new Response()
+        {
+            issucceed = true,
+            statusCode = 200,
+            message = "Confirmation Email OTP send successfully.",
+        };
     }
 }

@@ -10,7 +10,7 @@ public interface IUserService
     //Task<Response> UpdateUserAsync(Guid id, UserUpdateDto dto, CancellationToken ct);
     Task<Response> UserDeleteAsync(Guid id,  CancellationToken ct);
     Task<Response> BlockUnBlockUser(Guid id, CancellationToken ct);
-    Task<Response> UserActivateInactive(Guid id, CancellationToken ct);
+    Task<Response> ResetSendConfirmEmailOTP(Guid user_id, CancellationToken ct);
     Task<List<UserListDto>>  GetAllUsersAsync(CancellationToken ct);
     Task<UserDetailDto?> GetUserByIdAsync(Guid id, CancellationToken ct);
     Task<Response> AdminAddUserAsync(AdminAddUserDto dto, CancellationToken ct);

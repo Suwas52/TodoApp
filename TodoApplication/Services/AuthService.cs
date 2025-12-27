@@ -15,17 +15,17 @@ namespace TodoApplication.Services;
 
 public class AuthService : IAuthService
 {
-    private const int MaxAttempts = 5;
     
+    private const int MaxAttempts = 5;
     private readonly IUnitOfWork _uow;
     private readonly IUsersRepository _usersRepo;
     private readonly IRolesRepository _rolesRepository;
     private readonly IUserRolesRepository _userRolesRepository;
     private readonly ISystemInfoFromCookie _cookieInfo;
     private readonly IDashbordCardRepo _dashboard;
-    private readonly IForgetPasswordMail _forgetPasswordMail;
     private readonly IVerificationCodeRepository _codeRepository;
-    
+    private readonly IForgetPasswordMail _forgetPasswordMail;
+    private readonly IVerificationService _verificationService;
     public AuthService(
         IUnitOfWork uow,
         IUsersRepository usersRepo,
@@ -33,8 +33,9 @@ public class AuthService : IAuthService
         IUserRolesRepository userRolesRepository,
         ISystemInfoFromCookie cookieInfo,
         IDashbordCardRepo dashboard,
+        IVerificationCodeRepository codeRepository,
         IForgetPasswordMail forgetPasswordMail,
-        IVerificationCodeRepository codeRepository
+        IVerificationService  verificationService
         )
     {
         _uow = uow;
@@ -43,14 +44,15 @@ public class AuthService : IAuthService
         _userRolesRepository = userRolesRepository;
         _cookieInfo = cookieInfo;
         _dashboard = dashboard;
-        _forgetPasswordMail = forgetPasswordMail;
         _codeRepository = codeRepository;
+        _forgetPasswordMail = forgetPasswordMail;
+        _verificationService  = verificationService;
     }
 
     public async Task<Users?> GetUserByEmail(string email, CancellationToken ct)
     {
         var user =  await _usersRepo.GetUserByEmailAsync(email, ct);
-        if (!user.is_active || !user.email_confirmed)
+        if (!user.email_confirmed)
             return null;
         
         return user;
@@ -80,7 +82,7 @@ public class AuthService : IAuthService
             CookieAuthenticationDefaults.AuthenticationScheme
         );
         
-        user.last_login_date = DateTime.UtcNow;
+        user.last_login_date = DateTime.Now;
         await _uow.SaveChangesAsync(ct);
 
         return new ClaimsPrincipal(identity);
@@ -111,8 +113,7 @@ public class AuthService : IAuthService
                 last_name = dto.last_name,
                 email = dto.email,
                 password_hash = PasswordHasher.HashPassword(dto.password),
-                created_at = DateTime.UtcNow,
-                is_active = true
+                created_at = DateTime.Now,
             };
 
             await _usersRepo.AddUserAsync(user, ct);
@@ -126,7 +127,7 @@ public class AuthService : IAuthService
             };
 
             await _userRolesRepository.AddUserRolesAsync(userRole, ct);
-            await ConfirmEmailSendCode(
+            await _verificationService.SendConfirmEmailOTP(
                 user,
                 ct);
             await _uow.CommitTransactionAsync(ct);
@@ -178,7 +179,7 @@ public class AuthService : IAuthService
         user.address = dto.address;
         user.gender = dto.gender;
         user.phone_number = dto.phone_number;
-        user.updated_at = DateTime.UtcNow;
+        user.updated_at = DateTime.Now;
         
         await _uow.SaveChangesAsync(ct);
         return new Response
@@ -198,97 +199,9 @@ public class AuthService : IAuthService
         }
         return await _dashboard.UserDashboardCard(_cookieInfo.user_id,ct);
     }
-
-    private async Task ConfirmEmailSendCode(Users user, CancellationToken ct)
-    {
-        var otp = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
-        var codeHash = SHA256.HashData(Encoding.UTF8.GetBytes(otp));
-
-        var verificationCode = new VerificationCode
-        {
-            user_id =  user.user_id,
-            codehash = codeHash,
-            expires_at = DateTime.UtcNow.AddMinutes(10)
-        };
-        await _codeRepository.AddAsync(verificationCode, ct);
-
-        var dto = new ConfirmEmailMailDto
-        {
-            Email = user.email,
-            Name = user.first_name + " " + user.last_name,
-            OtpCode = otp
-        };
-
-        await _forgetPasswordMail.SendConfirmationCodeAsync( dto, ct);
-    }
     
-     public async Task<Response> VerifyEmail(ConfirmEmailDto dto, CancellationToken ct)
-    {
-        await _uow.BeginTransactionAsync(ct);
-        try
-        {
-                
-            var codeHash = SHA256.HashData(Encoding.UTF8.GetBytes(dto.VerificationCode));
-            
-            var verification = await _codeRepository.GetValidCodeAsync(codeHash);
-
-            if (verification == null)
-            {
-                await _uow.RollbackTransactionAsync(ct);
-                return new Response
-                {
-                    issucceed = false,
-                    statusCode = 400,
-                    message = "Invalid or expired code.",
-                };
-            }
-
-
-            if (verification.attempt_count >= MaxAttempts)
-            {
-                await _uow.RollbackTransactionAsync(ct);
-                return new Response
-                {
-                    issucceed = false,
-                    statusCode = 400,
-                    message = "Too many attempts.",
-                };
-            }
     
-            var user = await _usersRepo.GetUserByIdAsync(verification.user_id, ct);
-            if (user == null)
-            {
-                await _uow.RollbackTransactionAsync(ct);
-                return new Response
-                {
-                    issucceed = false,
-                    statusCode = 400,
-                    message = "User not found.",
-                };
-            }
-    
-            user.is_active = true;
-            user.email_confirmed = true;
-            user.updated_at = DateTime.UtcNow;
-            await _uow.CommitTransactionAsync(ct);
-            return new Response
-            {
-                issucceed = true,
-                statusCode = 200,
-                message = "Email Confirm successful",
-            };
-        }
-        catch (Exception ex)
-        {
-            _uow.RollbackTransactionAsync(ct);
-            return new Response
-            {
-                issucceed = false,
-                statusCode = 500,
-                message = ex.Message,
-            };
-        }
-    }
+     
     
     public async Task<Response> RequestPasswordResetAsync(string email, CancellationToken ct)
     {
@@ -315,7 +228,7 @@ public class AuthService : IAuthService
              {
                  user_id =  user.user_id,
                  codehash = codeHash,
-                 expires_at = DateTime.UtcNow.AddMinutes(10)
+                 expires_at = DateTime.Now.AddMinutes(10)
              };
             await _codeRepository.AddAsync(verificationCode, ct);
 
@@ -405,8 +318,8 @@ public class AuthService : IAuthService
             var hashPassword = PasswordHasher.HashPassword(dto.NewPassword);
     
             user.password_hash = hashPassword;
-            user.updated_at = DateTime.UtcNow;
-            user.password_change_date = DateTime.UtcNow;
+            user.updated_at = DateTime.Now;
+            user.password_change_date = DateTime.Now;
 
             
             await _uow.CommitTransactionAsync(ct);

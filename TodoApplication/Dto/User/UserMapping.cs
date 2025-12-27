@@ -13,7 +13,7 @@ internal static class UserMapping
             email_confirmed = user.email_confirmed,
             first_name = user.first_name,
             last_name = user.last_name,
-            is_active =  user.is_active,
+          //  is_active =  user.is_active,
             last_login_date = user.last_login_date,
             is_blocked =  user.is_blocked,
             is_deleted =   user.is_deleted,

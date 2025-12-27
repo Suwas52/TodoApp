@@ -140,6 +140,16 @@
                                 <i class="bi @pIcon me-2"></i> @Model.priority
                             </div>
                         </div>
+                        
+                        <div class="mb-4">
+                            <span class="label-sm">Due Date</span>
+                            <div class="fw-medium text-dark">
+                                <i class="bi bi-calendar3 me-2 text-muted"></i>@Model.due_date.ToString("MMM dd, yyyy")
+                            </div>
+                            <div class="text-muted small mt-1">
+                                <i class="bi bi-clock me-2"></i>@Model.due_date.ToString("hh:mm tt")
+                            </div>
+                        </div>
 
                         <div class="mb-4">
                             <span class="label-sm">Created On</span>

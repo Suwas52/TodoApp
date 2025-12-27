@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TodoApplication.Data;
 using TodoApplication.Dto;
 using TodoApplication.Entities;
+using TodoApplication.Enum;
 using TodoApplication.Repository.Interfaces;
 
 namespace TodoApplication.Repository;
@@ -19,6 +20,15 @@ public class TodosRepository : ITodoRepository
         await _context.Todos.AddAsync(todos, ct);
         await _context.SaveChangesAsync(ct);
         //return _todoRepositoryImplementation.AddTodoAsync(todos, ct);
+    }
+
+    public async Task<List<Todos>> GetExpiredTodosAsync(CancellationToken ct)
+    {
+        return await  _context.Todos
+            .Where(t => !t.is_deleted && t.due_date.Day == DateTime.Now.Day && 
+                        t.status == todo_status.Pending
+                        )
+            .ToListAsync(ct);
     }
 
     public async Task UpdateTodoAsync(Todos todos, CancellationToken ct)

@@ -15,6 +15,4 @@ public interface IAuthService
     Task<DashboardCardDto> DashboardCard(CancellationToken ct);
     Task<Response> RequestPasswordResetAsync(string email, CancellationToken ct);
     Task<Response> ResetPassword(ResetPasswordDto dto, CancellationToken ct);
-    // Task<Response> ConfirmEmailSendCode(string email, CancellationToken ct);
-    Task<Response> VerifyEmail(ConfirmEmailDto dto, CancellationToken ct);
 }

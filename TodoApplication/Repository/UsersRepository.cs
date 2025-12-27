@@ -49,7 +49,7 @@ public class UsersRepository : IUsersRepository
                 email = u.email,
                 full_name = $"{u.first_name} {u.last_name}",
                 email_confirmed = u.email_confirmed,
-                is_active =  u.is_active,
+               // is_active =  u.is_active,
             })
             .ToListAsync(ct);
     }
@@ -65,7 +65,7 @@ public class UsersRepository : IUsersRepository
 
     public async Task<bool> EmailExistsAsync(string email, CancellationToken ct)
     {
-        return await _context.Users.AnyAsync(u => u.email == email, ct);
+        return await _context.Users.AnyAsync(u => u.email == email && u.email_confirmed, ct);
     }
 
     public IQueryable<UserListDto> GetUsers()
@@ -77,7 +77,7 @@ public class UsersRepository : IUsersRepository
                 email = u.email,
                 full_name = $"{u.first_name} {u.last_name}",
                 email_confirmed = u.email_confirmed,
-                is_active =  u.is_active,
+           //     is_active =  u.is_active,
                 is_blocked = u.is_blocked,
             });
     }

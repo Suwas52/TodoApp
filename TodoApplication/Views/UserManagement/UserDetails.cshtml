@@ -73,26 +73,23 @@
                     <div>
                         <h3 class="fw-bold mb-1">@Model.first_name @Model.last_name</h3>
                         <p class="mb-0 opacity-75"><i class="bi bi-envelope me-2"></i>@Model.email</p>
+                        <p class="mb-0 opacity-75"><i class="bi bi-phone me-2"></i>@Model.phone_number</p>
                     </div>
                 </div>
 
                 @if (User.IsInRole("SuperAdmin"))
                 {
                     <div class="d-flex gap-2">
-                        <form asp-action="ActiveInactiveUser" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post">
-                            @if (Model.is_active)
-                            {
+                        @if (!Model.email_confirmed)
+                        {
+                            <form asp-action="ResentEmailConfirmOTP" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post">
+
                                 <button type="submit" class="btn btn-warning btn-sm px-3 rounded-pill fw-bold">
-                                    <i class="bi bi-power me-1"></i> Deactivate
+                                    <i class="bi bi-power me-1"></i> Resent Email Confirmation OTP
                                 </button>
-                            }
-                            else
-                            {
-                                <button type="submit" class="btn btn-success btn-sm px-3 rounded-pill fw-bold">
-                                    <i class="bi bi-check-circle me-1"></i> Activate User
-                                </button>
-                            }
-                        </form>
+                            </form>
+                        }
+                        
 
                         <form asp-action="BlockUnblockUser" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post">
                             @if (Model.is_blocked)
@@ -119,15 +116,7 @@
                     <h6 class="fw-bold text-dark border-bottom pb-2">Account Status</h6>
                 </div>
 
-                <div class="col-6 col-md-4">
-                    <span class="info-label">Current Status</span>
-                    <div class="d-flex align-items-center">
-                        <span class="status-indicator @(Model.is_active ? "bg-success" : "bg-danger")"></span>
-                        <span class="fw-bold @(Model.is_active ? "text-success" : "text-danger")">
-                            @(Model.is_active ? "ACTIVE" : "INACTIVE")
-                        </span>
-                    </div>
-                </div>
+                
 
                 <div class="col-6 col-md-4">
                     <span class="info-label">Access Policy</span>
@@ -145,6 +134,16 @@
                         <i class="bi @(Model.email_confirmed ? "bi-patch-check-fill text-primary" : "bi-patch-exclamation text-warning") me-2"></i>
                         <span class="fw-bold @(Model.email_confirmed ? "text-primary" : "text-warning")">
                             @(Model.email_confirmed ? "VERIFIED" : "PENDING")
+                        </span>
+                    </div>
+                </div>
+                
+                <div class="col-6 col-md-4">
+                    <span class="info-label">Blocked</span>
+                    <div class="d-flex align-items-center">
+                        <span class="status-indicator @(Model.is_blocked ? "bg-success" : "bg-danger")"></span>
+                        <span class="fw-bold @(Model.is_blocked ? "text-success" : "text-danger")">
+                            @(Model.is_blocked ? "True" : "False")
                         </span>
                     </div>
                 </div>

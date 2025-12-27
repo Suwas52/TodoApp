@@ -18,7 +18,6 @@ public class Users
     public string phone_number { get; set; }
     public string address { get; set; }
     public user_gender gender { get; set; }
-    public bool is_active { get; set; }
     public bool is_deleted { get; set; }
     public bool is_blocked { get; set; }
     public DateTime created_at { get; set; }
