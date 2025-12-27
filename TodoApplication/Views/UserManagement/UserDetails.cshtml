@@ -1,3 +1,199 @@
+@* @model TodoApplication.Dto.UserDetailDto; *@
+@* *@
+@* @{ *@
+@*     ViewData["Title"] = "Management: " + Model.first_name; *@
+@* } *@
+@* *@
+@* <style> *@
+@*     /* Status Badge Styling */ *@
+@*     .status-indicator { *@
+@*         width: 12px; *@
+@*         height: 12px; *@
+@*         border-radius: 50%; *@
+@*         display: inline-block; *@
+@*         margin-right: 5px; *@
+@*     } *@
+@* *@
+@*     .info-label { *@
+@*         font-size: 0.75rem; *@
+@*         font-weight: 700; *@
+@*         text-transform: uppercase; *@
+@*         color: #6c757d; *@
+@*         letter-spacing: 0.5px; *@
+@*         margin-bottom: 4px; *@
+@*         display: block; *@
+@*     } *@
+@* *@
+@*     .info-value { *@
+@*         font-size: 1rem; *@
+@*         font-weight: 500; *@
+@*         color: #212529; *@
+@*     } *@
+@* *@
+@*     .card-custom { *@
+@*         border: none; *@
+@*         border-radius: 16px; *@
+@*         overflow: hidden; *@
+@*     } *@
+@* *@
+@*     .profile-header-bg { *@
+@*         background: linear-gradient(135deg, #1e293b 0%, #334155 100%); *@
+@*         padding: 40px 30px; *@
+@*     } *@
+@* *@
+@*     .avatar-placeholder { *@
+@*         width: 90px; *@
+@*         height: 90px; *@
+@*         background: #f8fafc; *@
+@*         color: #334155; *@
+@*         display: flex; *@
+@*         align-items: center; *@
+@*         justify-content: center; *@
+@*         font-size: 2rem; *@
+@*         font-weight: bold; *@
+@*         border-radius: 20px; *@
+@*         border: 4px solid rgba(255,255,255,0.2); *@
+@*     } *@
+@* </style> *@
+@* *@
+@* <div class="container py-5"> *@
+@*     <div class="mb-4"> *@
+@*         <a asp-action="UserList" class="text-decoration-none text-muted small fw-bold"> *@
+@*             <i class="bi bi-arrow-left me-1"></i> BACK TO USER LIST *@
+@*         </a> *@
+@*     </div> *@
+@* *@
+@*     <div class="card card-custom shadow-sm"> *@
+@*         <div class="profile-header-bg text-white"> *@
+@*             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4"> *@
+@*                 <div class="d-flex align-items-center gap-3"> *@
+@*                     <div class="avatar-placeholder"> *@
+@*                         @Model.first_name.Substring(0, 1)@Model.last_name.Substring(0, 1) *@
+@*                     </div> *@
+@*                     <div> *@
+@*                         <h3 class="fw-bold mb-1">@Model.first_name @Model.last_name</h3> *@
+@*                         <p class="mb-0 opacity-75"><i class="bi bi-envelope me-2"></i>@Model.email</p> *@
+@*                         <p class="mb-0 opacity-75"><i class="bi bi-phone me-2"></i>@Model.phone_number</p> *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 @if (User.IsInRole("SuperAdmin")) *@
+@*                 { *@
+@*                     <div class="d-flex gap-2"> *@
+@*                         @if (!Model.email_confirmed) *@
+@*                         { *@
+@*                             <form asp-action="ResentEmailConfirmOTP" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post"> *@
+@* *@
+@*                                 <button type="submit" class="btn btn-warning btn-sm px-3 rounded-pill fw-bold"> *@
+@*                                     <i class="bi bi-power me-1"></i> Resent Email Confirmation OTP *@
+@*                                 </button> *@
+@*                             </form> *@
+@*                         } *@
+@*                          *@
+@* *@
+@*                         <form asp-action="BlockUnblockUser" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post"> *@
+@*                             @if (Model.is_blocked) *@
+@*                             { *@
+@*                                 <button type="submit" class="btn btn-outline-light btn-sm px-3 rounded-pill fw-bold"> *@
+@*                                     <i class="bi bi-unlock me-1"></i> Unblock *@
+@*                                 </button> *@
+@*                             } *@
+@*                             else *@
+@*                             { *@
+@*                                 <button type="submit" class="btn btn-danger btn-sm px-3 rounded-pill fw-bold"> *@
+@*                                     <i class="bi bi-slash-circle me-1"></i> Block User *@
+@*                                 </button> *@
+@*                             } *@
+@*                         </form> *@
+@*                     </div> *@
+@*                 } *@
+@*             </div> *@
+@*         </div> *@
+@* *@
+@*         <div class="card-body p-4 p-md-5"> *@
+@*             <div class="row g-4"> *@
+@*                 <div class="col-12 mb-2"> *@
+@*                     <h6 class="fw-bold text-dark border-bottom pb-2">Account Status</h6> *@
+@*                 </div> *@
+@* *@
+@*                  *@
+@* *@
+@*                 <div class="col-6 col-md-4"> *@
+@*                     <span class="info-label">Access Policy</span> *@
+@*                     <div class="d-flex align-items-center"> *@
+@*                         <i class="bi @(Model.is_blocked ? "bi-lock-fill text-danger" : "bi-unlock-fill text-success") me-2"></i> *@
+@*                         <span class="fw-bold @(Model.is_blocked ? "text-danger" : "text-success")"> *@
+@*                             @(Model.is_blocked ? "BLOCKED" : "AUTHORIZED") *@
+@*                         </span> *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-6 col-md-4"> *@
+@*                     <span class="info-label">Email Verification</span> *@
+@*                     <div class="d-flex align-items-center"> *@
+@*                         <i class="bi @(Model.email_confirmed ? "bi-patch-check-fill text-primary" : "bi-patch-exclamation text-warning") me-2"></i> *@
+@*                         <span class="fw-bold @(Model.email_confirmed ? "text-primary" : "text-warning")"> *@
+@*                             @(Model.email_confirmed ? "VERIFIED" : "PENDING") *@
+@*                         </span> *@
+@*                     </div> *@
+@*                 </div> *@
+@*                  *@
+@*                 <div class="col-6 col-md-4"> *@
+@*                     <span class="info-label">Blocked</span> *@
+@*                     <div class="d-flex align-items-center"> *@
+@*                         <span class="status-indicator @(Model.is_blocked ? "bg-success" : "bg-danger")"></span> *@
+@*                         <span class="fw-bold @(Model.is_blocked ? "text-success" : "text-danger")"> *@
+@*                             @(Model.is_blocked ? "True" : "False") *@
+@*                         </span> *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-12 mt-5"> *@
+@*                     <h6 class="fw-bold text-dark border-bottom pb-2">Assigned Permissions</h6> *@
+@*                     <div class="d-flex flex-wrap gap-2 mt-3"> *@
+@*                         @foreach (var role in Model.roles) *@
+@*                         { *@
+@*                             <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill"> *@
+@*                                 <i class="bi bi-shield-check me-1"></i> @role.role_Name *@
+@*                             </span> *@
+@*                         } *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-12 mt-5"> *@
+@*                     <h6 class="fw-bold text-dark border-bottom pb-2">System History</h6> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-md-6 col-lg-3"> *@
+@*                     <span class="info-label">Member Since</span> *@
+@*                     <div class="info-value text-muted">@Model.created_at.ToString("MMM dd, yyyy")</div> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-md-6 col-lg-3"> *@
+@*                     <span class="info-label">Last Activity</span> *@
+@*                     <div class="info-value text-muted"> *@
+@*                         @(Model.last_login_date?.ToString("MMM dd, yyyy HH:mm") ?? "Never") *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-md-6 col-lg-3"> *@
+@*                     <span class="info-label">Login Fails</span> *@
+@*                     <div class="info-value @(Model.login_fail_count > 0 ? "text-danger" : "text-muted")"> *@
+@*                         @Model.login_fail_count Attempts *@
+@*                     </div> *@
+@*                 </div> *@
+@* *@
+@*                 <div class="col-md-6 col-lg-3"> *@
+@*                     <span class="info-label">Last Updated</span> *@
+@*                     <div class="info-value text-muted"> *@
+@*                         @(Model.updated_at?.ToString("MMM dd, yyyy") ?? "No updates") *@
+@*                     </div> *@
+@*                 </div> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* </div> *@
+
 @model TodoApplication.Dto.UserDetailDto;
 
 @{
@@ -54,16 +250,44 @@
         border-radius: 20px;
         border: 4px solid rgba(255,255,255,0.2);
     }
+
+    .manual-verify-box {
+        background-color: #fff9db;
+        border: 1px dashed #fab005;
+        border-radius: 16px;
+    }
+
+    .otp-admin-input {
+        letter-spacing: 4px;
+        font-weight: 800;
+        border: 2px solid #fab005 !important;
+        border-radius: 10px;
+    }
 </style>
 
 <div class="container py-5">
-    <div class="mb-4">
+    @* --- Top Navigation & Alerts --- *@
+    <div class="d-flex justify-content-between align-items-center mb-4">
         <a asp-action="UserList" class="text-decoration-none text-muted small fw-bold">
             <i class="bi bi-arrow-left me-1"></i> BACK TO USER LIST
         </a>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success py-2 px-4 mb-0 rounded-pill small shadow-sm">
+                <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger py-2 px-4 mb-0 rounded-pill small shadow-sm">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+            </div>
+        }
     </div>
 
     <div class="card card-custom shadow-sm">
+        @* --- Header Section --- *@
         <div class="profile-header-bg text-white">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-4">
                 <div class="d-flex align-items-center gap-3">
@@ -83,19 +307,19 @@
                         @if (!Model.email_confirmed)
                         {
                             <form asp-action="ResentEmailConfirmOTP" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post">
-
-                                <button type="submit" class="btn btn-warning btn-sm px-3 rounded-pill fw-bold">
-                                    <i class="bi bi-power me-1"></i> Resent Email Confirmation OTP
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-warning btn-sm px-3 rounded-pill fw-bold shadow-sm">
+                                    <i class="bi bi-send-fill me-1"></i> Resend OTP
                                 </button>
                             </form>
                         }
-                        
 
                         <form asp-action="BlockUnblockUser" asp-route-id="@Model.user_id" asp-controller="UserManagement" method="post">
+                            @Html.AntiForgeryToken()
                             @if (Model.is_blocked)
                             {
                                 <button type="submit" class="btn btn-outline-light btn-sm px-3 rounded-pill fw-bold">
-                                    <i class="bi bi-unlock me-1"></i> Unblock
+                                    <i class="bi bi-unlock me-1"></i> Unblock User
                                 </button>
                             }
                             else
@@ -111,12 +335,36 @@
         </div>
 
         <div class="card-body p-4 p-md-5">
+            
+            @if (User.IsInRole("SuperAdmin") && !Model.email_confirmed)
+            {
+                <div class="manual-verify-box p-4 mb-5 shadow-sm">
+                    <div class="row align-items-center">
+                        <div class="col-lg-7 mb-3 mb-lg-0">
+                            <h6 class="fw-bold text-dark mb-1"><i class="bi bi-shield-lock-fill me-2 text-warning"></i>Manual OTP Verification</h6>
+                            <p class="text-muted small mb-0">If the user has received the code via email, enter it below to verify their account immediately.</p>
+                        </div>
+                        <div class="col-lg-5">
+                            <form asp-action="ManualVerifyUser" asp-controller="UserManagement" method="post" class="row g-2">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="Email" value="@Model.email" />
+                                <div class="col-7">
+                                    <input type="text" name="VerificationCode" class="form-control otp-admin-input text-center" 
+                                           placeholder="000000" maxlength="6" required autocomplete="off" />
+                                </div>
+                                <div class="col-5">
+                                    <button type="submit" class="btn btn-dark w-100 fw-bold rounded-3">Verify</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+
             <div class="row g-4">
                 <div class="col-12 mb-2">
                     <h6 class="fw-bold text-dark border-bottom pb-2">Account Status</h6>
                 </div>
-
-                
 
                 <div class="col-6 col-md-4">
                     <span class="info-label">Access Policy</span>
@@ -139,27 +387,36 @@
                 </div>
                 
                 <div class="col-6 col-md-4">
-                    <span class="info-label">Blocked</span>
+                    <span class="info-label">Block Status</span>
                     <div class="d-flex align-items-center">
-                        <span class="status-indicator @(Model.is_blocked ? "bg-success" : "bg-danger")"></span>
-                        <span class="fw-bold @(Model.is_blocked ? "text-success" : "text-danger")">
-                            @(Model.is_blocked ? "True" : "False")
+                        <span class="status-indicator @(Model.is_blocked ? "bg-danger" : "bg-success")"></span>
+                        <span class="fw-bold @(Model.is_blocked ? "text-danger" : "text-success")">
+                            @(Model.is_blocked ? "BLOCKED" : "NO RESTRICTIONS")
                         </span>
                     </div>
                 </div>
 
+                @* --- Roles Section --- *@
                 <div class="col-12 mt-5">
                     <h6 class="fw-bold text-dark border-bottom pb-2">Assigned Permissions</h6>
                     <div class="d-flex flex-wrap gap-2 mt-3">
-                        @foreach (var role in Model.roles)
+                        @if (Model.roles != null && Model.roles.Any())
                         {
-                            <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill">
-                                <i class="bi bi-shield-check me-1"></i> @role.role_Name
-                            </span>
+                            foreach (var role in Model.roles)
+                            {
+                                <span class="badge bg-light text-primary border border-primary px-3 py-2 rounded-pill">
+                                    <i class="bi bi-shield-check me-1"></i> @role.role_Name
+                                </span>
+                            }
+                        }
+                        else
+                        {
+                            <span class="text-muted small italic">No roles assigned.</span>
                         }
                     </div>
                 </div>
 
+                @* --- History Section --- *@
                 <div class="col-12 mt-5">
                     <h6 class="fw-bold text-dark border-bottom pb-2">System History</h6>
                 </div>

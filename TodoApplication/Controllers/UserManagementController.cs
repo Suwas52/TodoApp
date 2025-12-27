@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TodoApplication.Dto;
+using TodoApplication.Dto.User;
 using TodoApplication.Services.Interfaces;
 
 namespace TodoApplication.Controllers;
@@ -10,10 +11,14 @@ public class UserManagementController : Controller
 {
     // GET
     private readonly IUserService _userService;
+    private readonly IVerificationService _verificationService;
     
-    public UserManagementController(IUserService  userService)
+    public UserManagementController(
+        IUserService  userService,
+        IVerificationService verificationService)
     {
         _userService = userService;
+        _verificationService = verificationService;
     }
     
     [Authorize(Roles = "SuperAdmin,Manager")]
@@ -113,6 +118,23 @@ public class UserManagementController : Controller
         var result = await _userService.ResetSendConfirmEmailOTP(id, ct);
         
         return RedirectToAction(nameof(UserDetails), new { id = id });
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ManualVerifyUser(ConfirmEmailDto dto, CancellationToken ct)
+    {
+        if (!ModelState.IsValid)
+            return View(dto);
+
+        var result = await _verificationService.VerifyEmail(dto, ct);
+        if (!result.issucceed)
+        {
+            ModelState.AddModelError("", result.message);
+            return View(dto);
+        }
+        
+        return RedirectToAction(nameof(UserDetails));
     }
     
 
