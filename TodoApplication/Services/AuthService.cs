@@ -64,7 +64,16 @@ public class AuthService : IAuthService
         bool passwordMatch =
             PasswordHasher.VerifyHashedPassword(user.password_hash, password);
 
-        if (!passwordMatch) return null;
+        if (!passwordMatch)
+        {
+            user.login_fail_count++;
+            if (user.login_fail_count >= MaxAttempts)
+            {
+                user.is_blocked = true;
+            }
+            return null;
+        }
+        
 
         var claims = new List<Claim>
         {
