@@ -24,6 +24,7 @@ public class TodoExpiredJob
 
        foreach (var todo in expiredTodo)
        {
+           // todo.createdTodoUser.email
            todo.status = todo_status.Expired;
            todo.updated_at = DateTime.Now;
            
