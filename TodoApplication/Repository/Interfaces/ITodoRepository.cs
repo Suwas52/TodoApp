@@ -15,4 +15,8 @@ public interface ITodoRepository
     Task<List<TodoListDto>> TodayTodoLists(CancellationToken ct);
     Task<List<Todos>> GetExpiredTodosAsync(CancellationToken ct);
     Task<List<Todos>> GetTodosForTodayReminderAsync(CancellationToken ct);
+
+    Task<List<Todos>> GetSameDayDueTodosForOneHourReminderAsync(
+        DateTime now,
+        CancellationToken ct);
 }

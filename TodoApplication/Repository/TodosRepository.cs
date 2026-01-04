@@ -110,4 +110,24 @@ public class TodosRepository : ITodoRepository
             .AsNoTracking()
             .ToListAsync(ct);
     }
+    
+    public async Task<List<Todos>> GetSameDayDueTodosForOneHourReminderAsync(
+        DateTime now,
+        CancellationToken ct)
+    {
+        var today = now.Date;
+
+        return await _context.Todos
+            .Where(t =>
+                    !t.is_deleted &&
+                    !t.is_send_reminder &&
+                    t.status == todo_status.Pending &&
+                    t.created_at.Date == today &&
+                    t.due_date.Date == today &&
+                    t.due_date > now // future only
+            )
+            .Include(t => t.createdTodoUser)
+            .ToListAsync(ct);
+    }
+
 }

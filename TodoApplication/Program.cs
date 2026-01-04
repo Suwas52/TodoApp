@@ -113,6 +113,13 @@ RecurringJob.AddOrUpdate<TodoReminderJob>(
     TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time")
 );
 
+RecurringJob.AddOrUpdate<TodoSameDayReminderJob>(
+    "todo-same-day-1-hour-reminder",
+    job => job.ExecuteAsync(),
+    "*/5 * * * *" 
+);
+
+
 
 await app.RunAsync();
 public class HangfireAuthorizationFilter : IDashboardAuthorizationFilter
