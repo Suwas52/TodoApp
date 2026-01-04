@@ -39,7 +39,8 @@ public class TodosRepository : ITodoRepository
     public async Task<List<Todos>> GetExpiredTodosAsync(CancellationToken ct)
     {
         return await  _context.Todos
-            .Where(t => !t.is_deleted && t.due_date.Day == DateTime.Now.Day && 
+            .Where(t => !t.is_deleted && 
+                        t.due_date.Date == DateTime.Now.Date && 
                         t.status == todo_status.Pending
                         )
             .ToListAsync(ct);

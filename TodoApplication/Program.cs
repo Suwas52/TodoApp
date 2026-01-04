@@ -99,12 +99,13 @@ app.UseHangfireDashboard("/hangfire", new DashboardOptions
 
 
 await app.SeedApplicationDataAsync();
-//
-// RecurringJob.AddOrUpdate<TodoReminderJob>(
-//     "expired-todo-scanner",
-//     job => job.ExecuteAsync(CancellationToken.None),
-//     Cron.Minutely
-// );
+
+RecurringJob.AddOrUpdate<TodoExpiredJob>(
+    "expired-todo-scanner",
+    job => job.ExecuteAsync(),
+    Cron.Daily(23, 30),
+    TimeZoneInfo.FindSystemTimeZoneById("Nepal Standard Time")
+);
 
 RecurringJob.AddOrUpdate<TodoReminderJob>(
     "todo-daily-reminder",
