@@ -22,6 +22,20 @@ public class TodosRepository : ITodoRepository
         //return _todoRepositoryImplementation.AddTodoAsync(todos, ct);
     }
 
+    public async Task<List<Todos>> GetTodosForTodayReminderAsync(CancellationToken ct)
+    {
+        var today = DateTime.Today;
+        return await _context.Todos
+            .Where(t => 
+                !t.is_deleted && 
+                t.created_at.Date < today && 
+                t.due_date.Date == today && 
+                !t.is_send_reminder && 
+                t.status == todo_status.Pending)
+            .Include(t => t.createdTodoUser)
+            .ToListAsync(ct);
+    }
+
     public async Task<List<Todos>> GetExpiredTodosAsync(CancellationToken ct)
     {
         return await  _context.Todos

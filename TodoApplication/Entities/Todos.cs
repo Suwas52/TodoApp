@@ -11,6 +11,8 @@ public sealed class Todos
     public todo_status status { get; set; }
     public todo_priority priority { get; set; }
     public DateTime due_date { get; set; }
+    public bool is_send_reminder { get; set; }
+    public DateTime? reminder_sent_at { get; set; }
     public bool is_deleted { get; set; }
     public DateTime created_at { get; set; }
     public string created_by { get; set; }

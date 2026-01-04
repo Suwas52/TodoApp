@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TodoApplication")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53428abd7b228496307a63723e268e432f4a41ca")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4e1f515a938b56a13f976be9b46b8c660efd298d")]
 [assembly: System.Reflection.AssemblyProductAttribute("TodoApplication")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TodoApplication")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

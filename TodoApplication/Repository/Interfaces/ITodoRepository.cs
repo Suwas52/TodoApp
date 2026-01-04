@@ -14,4 +14,5 @@ public interface ITodoRepository
     Task<List<TodoListDto>> TodayTodoListByUserId(Guid userId, CancellationToken ct);
     Task<List<TodoListDto>> TodayTodoLists(CancellationToken ct);
     Task<List<Todos>> GetExpiredTodosAsync(CancellationToken ct);
+    Task<List<Todos>> GetTodosForTodayReminderAsync(CancellationToken ct);
 }

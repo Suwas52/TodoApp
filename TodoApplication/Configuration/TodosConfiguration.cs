@@ -21,6 +21,8 @@ public sealed class TodosConfiguration : IEntityTypeConfiguration<Todos>
         builder.Property(t => t.created_by).HasMaxLength(255).IsRequired();
         builder.Property(t => t.updated_at).IsRequired();
         builder.Property(t => t.updated_by).HasMaxLength(255).IsRequired(false);
+        builder.Property(t => t.is_send_reminder).HasDefaultValue(false).IsRequired();
+        builder.Property(t => t.reminder_sent_at).IsRequired(false);
         
         builder.HasOne(t => t.createdTodoUser)
             .WithMany(t => t.todos)
