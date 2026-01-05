@@ -38,6 +38,7 @@ builder.Services.AddScoped<IVerificationService, VerificationService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDashbordCardRepo, DashbordCardRepo>();
 builder.Services.AddScoped<IVerificationCodeRepository, VerificationCodeRepository>();
+builder.Services.AddScoped<ITodoEmailService, TodoEmailService>();
 
 
 builder.Services.AddHttpContextAccessor();
