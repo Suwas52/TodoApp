@@ -1,0 +1,25 @@
+# Build folders
+bin/
+obj/
+
+# Rider / JetBrains
+.idea/
+
+# User-specific files
+*.user
+*.suo
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.*
+
+# App settings (sensitive)
+appsettings.json
+appsettings.*.json
